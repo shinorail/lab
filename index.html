@@ -1,88 +1,35 @@
+ご提示いただいたHTMLから、戻るボタンに関連するHTML構造とCSSを削除した完璧なコードです。
+
 <!DOCTYPE html>
 
 <html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Under Construction / 制作中</title> <style> body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; background-color: #ffffff; color: #333333; line-height: 1.8; }
 
-    /* 戻るボタンのスタイル */
-    .nav-menu {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-    }
-    .back-link {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: bold;
-        font-size: 1rem;
-        padding: 8px 16px;
-        border: 1px solid #007bff;
-        border-radius: 4px;
-    }
-    .back-link:hover {
-        background-color: #007bff;
-        color: #ffffff;
-    }
+.container { text-align: center; padding: 20px; max-width: 600px; width: 90%; }
 
-    .container {
-        text-align: center;
-        padding: 20px;
-        max-width: 600px;
-        width: 90%;
-    }
-    .main-text {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .sub-text {
-        font-size: 1rem;
-        color: #666666;
-        margin-bottom: 30px;
-    }
-    .translate-widget {
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid #eeeeee;
-    }
+.main-text { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; }
 
-    @media (max-width: 480px) {
-        .nav-menu {
-            position: static;
-            margin-bottom: 40px;
-        }
-        .main-text {
-            font-size: 1.4rem;
-        }
-    }
-</style>
+.sub-text { font-size: 1rem; color: #666666; margin-bottom: 30px; }
+
+.translate-widget { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee; }
+
+@media (max-width: 480px) { .main-text { font-size: 1.4rem; } } </style>
+
 </head> <body>
 
-<nav class="nav-menu">
-    <a href="[https://shinorail.github.io/main/links.html](https://shinorail.github.io/main/links.html)" class="back-link">戻る / Back</a>
-</nav>
+<div class="container"> <div class="main-text"> 現在このページは制作中です
 
-<div class="container">
-    <div class="main-text">
-        現在このページは制作中です<br>
-        Under Construction
-    </div>
-    
-    <div class="sub-text">
-        ただいま新しいコンテンツを準備しております。公開まで今しばらくお待ちください。<br>
-        We are currently preparing new content. Please check back soon.
-    </div>
 
-    <div class="translate-widget">
-        <div id="google_translate_element"></div>
-    </div>
-</div>
+Under Construction </div>
 
-<script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'ja',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-    }
-</script>
-<script type="text/javascript" src="//[translate.google.com/translate_a/element.js?cb=googleTranslateElementInit](https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit)"></script>
+<div class="sub-text"> ただいま新しいコンテンツを準備しております。公開まで今しばらくお待ちください。
+
+
+We are currently preparing new content. Please check back soon. </div>
+
+<div class="translate-widget"> <div id="google_translate_element"></div> </div> </div>
+
+<script type="text/javascript"> function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); } </script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body> </html>
