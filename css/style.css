@@ -1,11 +1,9 @@
 /* ─── 全体・基本スタイル（UDフォント & アクセシビリティ対応） ─── */
 body {
-    /* 視認性・判読性の高い各OSの標準UDフォント・システムフォントを優先指定 */
     font-family: 'BIZ UDPGothic', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Toppan Bunkyu Midashi Gothic', Meiryo, sans-serif;
     background-color: #1a1a1a;
     color: #ffffff;
     margin: 0;
-    /* 全角スペースの混入を防ぐため、末尾の不要な余白コメントをクリーンアップ */
     padding: 60px 20px 20px 20px; 
 }
 
@@ -19,7 +17,6 @@ body {
 }
 
 h1 {
-    /* 弱視や色覚の特性を持つ方でも文字がくっきり読めるよう、コントラストを調整（#00ffcc → #00f0c2） */
     color: #00f0c2;
     font-size: 1.4rem;
     border-bottom: 2px solid #00f0c2;
@@ -37,21 +34,20 @@ label {
     margin-bottom: 5px;
     font-weight: bold;
     font-size: 0.9rem;
-    color: #e0e0e0; /* 可読性向上のため、少し明るいグレーに変更 */
+    color: #e0e0e0;
 }
 
 input, select {
     width: 100%;
     padding: 12px;
     background: #333;
-    border: 2px solid #555; /* 枠線を少し太くし、入力エリアの境界線を明確化 */
+    border: 2px solid #555;
     color: #fff;
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1rem;
 }
 
-/* キーボード操作時やタップ時に、どこが選択されているか強烈に明示するUDデザイン */
 input:focus, select:focus {
     border-color: #00f0c2;
     outline: 2px solid #00f0c2;
@@ -63,7 +59,7 @@ input:focus, select:focus {
     width: 100%;
     padding: 14px;
     background: #00f0c2;
-    color: #000000; /* 黒文字とのコントラスト比を最高水準にするための調整 */
+    color: #000000;
     font-weight: bold;
     border: none;
     border-radius: 6px;
@@ -76,7 +72,6 @@ input:focus, select:focus {
     background: #00cdaa;
 }
 
-/* キーボードのTabキーで選択された際、しっかり目立つ枠線を表示 */
 .btn-location:focus-visible {
     outline: 3px solid #ffffff;
     outline-offset: 2px;
@@ -88,7 +83,7 @@ input:focus, select:focus {
 
 .location-status {
     font-size: 0.8rem;
-    color: #cccccc; /* 文字が背景に沈まないよう、明度をアップ */
+    color: #cccccc;
     margin-top: 6px;
     text-align: center;
 }
@@ -162,7 +157,7 @@ input:focus, select:focus {
 }
 
 .footer-links a {
-    color: #aaa; /* デフォルトのグレーを明るくし、暗い背景でも認識しやすく変更 */
+    color: #aaa;
     text-decoration: underline;
     cursor: pointer;
 }
@@ -258,11 +253,11 @@ input:focus, select:focus {
     background: #252525;
 }
 
-/* ─── モーダル（規約ポップアップ） ─── */
+/* ─── モーダル ─── */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); /* 背景との分離を明確にするため遮光率を少しアップ */
+    background: rgba(0,0,0,0.85);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -285,7 +280,7 @@ input:focus, select:focus {
     width: 90%;
     max-height: 75vh;
     overflow-y: auto;
-    border: 2px solid #555; /* モーダルの輪郭をハッキリさせるため境界線を強化 */
+    border: 2px solid #555;
 }
 
 .modal-content h2 {
@@ -305,8 +300,8 @@ input:focus, select:focus {
 
 .modal-content p {
     font-size: 0.85rem;
-    color: #e0e0e0; /* 長文が読みやすいよう明度をアップ */
-    line-height: 1.7; /* 行間をわずかに広げて文字の詰まり感を緩和 */
+    color: #e0e0e0;
+    line-height: 1.7;
     margin-top: 0;
 }
 
