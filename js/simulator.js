@@ -1,9 +1,18 @@
-// ─── 1. 位置情報の初期設定（篠ノ井駅付近） ───
+// ─── 1. 日付と時刻の自動初期設定 ───
+const now = new Date();
+
+// 日付を「YYYY-MM-DD」形式にして自動入力
+document.getElementById('date').valueAsDate = now;
+
+// 時刻を「HH:MM」形式にして自動入力
+const hours = String(now.getHours()).padStart(2, '0');
+const minutes = String(now.getMinutes()).padStart(2, '0');
+document.getElementById('time').value = `${hours}:${minutes}`;
+
+// 位置情報の初期値（初期値は篠ノ井駅付近）
 let currentLat = 36.5775;
 let currentLng = 138.1378;
 
-// 初期値として今日の日付を設定
-document.getElementById('date').valueAsDate = new Date();
 
 // ─── 2. ハンバーガーメニューの開閉制御 ───
 const toggleBtn = document.getElementById('nav-toggle');
@@ -21,6 +30,7 @@ document.addEventListener('click', (e) => {
         gNav.classList.remove('active');
     }
 });
+
 
 // ─── 3. 現在地取得（GPS）処理 ───
 document.getElementById('btn-location').addEventListener('click', () => {
@@ -40,6 +50,13 @@ document.getElementById('btn-location').addEventListener('click', () => {
                 `緯度: ${currentLat.toFixed(4)}, 経度: ${currentLng.toFixed(4)}`;
             document.getElementById('btn-location').innerText = "📍 現在地を取得して計算";
             
+            // ★現在地を取得した際にも、その瞬間の最新時刻に自動更新して再計算する
+            const latestNow = new Date();
+            const latestHours = String(latestNow.getHours()).padStart(2, '0');
+            const latestMinutes = String(latestNow.getMinutes()).padStart(2, '0');
+            document.getElementById('time').value = `${latestHours}:${latestMinutes}`;
+            document.getElementById('date').valueAsDate = latestNow;
+
             updateSimulation();
         },
         (error) => {
@@ -48,6 +65,7 @@ document.getElementById('btn-location').addEventListener('click', () => {
         }
     );
 });
+
 
 // ─── 4. 太陽光線シミュレーションコアロジック ───
 function updateSimulation() {
@@ -59,14 +77,17 @@ function updateSimulation() {
 
     const dateTime = new Date(`${dateInput}T${timeInput}`);
 
+    // SunCalcライブラリを利用して太陽方位・高度を計算
     const sunPos = SunCalc.getPosition(dateTime, currentLat, currentLng);
     
+    // ラジアンから度数に変換、および北を0度とする補正
     let sunAzimuthDeg = (sunPos.azimuth * 180 / Math.PI) + 180; 
     let sunAltitudeDeg = sunPos.altitude * 180 / Math.PI;
 
     document.getElementById('sun-azimuth').innerText = sunAzimuthDeg.toFixed(1);
     document.getElementById('sun-altitude').innerText = sunAltitudeDeg.toFixed(1);
 
+    // 日没判定
     if (sunAltitudeDeg < 0) {
         document.getElementById('light-condition').innerText = "夜間（日没しています）";
         document.getElementById('sun-mesh').style.display = 'none';
@@ -75,8 +96,10 @@ function updateSimulation() {
         document.getElementById('sun-mesh').style.display = 'block';
     }
 
+    // 列車から見た太陽の相対角度
     let relativeAngle = (sunAzimuthDeg - trackDir + 360) % 360;
 
+    // 詳細な光線状態判定基準
     let condition = "";
     if (relativeAngle >= 330 || relativeAngle < 30) {
         condition = "前頭部順光（正面ドカン向き）";
@@ -98,8 +121,10 @@ function updateSimulation() {
     
     document.getElementById('light-condition').innerText = condition;
 
+    // ビジュアル反映（列車の回転）
     document.getElementById('train-mesh').style.transform = `rotate(${trackDir}deg)`;
     
+    // 太陽の円周上配置
     const radius = 65;
     const sunRad = (sunAzimuthDeg - 90) * Math.PI / 180;
     const sunX = radius * Math.cos(sunRad);
@@ -110,13 +135,18 @@ function updateSimulation() {
     sunMesh.style.top = `calc(50% + ${sunY}px - 11px)`;
 }
 
+
+// ─── 5. 各種イベントリスナー登録 ───
 document.getElementById('date').addEventListener('change', updateSimulation);
 document.getElementById('time').addEventListener('change', updateSimulation);
 document.getElementById('track-dir').addEventListener('change', updateSimulation);
 
-// ─── 5. 利用規約モーダル制御 ───
+
+// ─── 6. 利用規約モーダル制御 ───
 const modal = document.getElementById('terms-modal');
 document.getElementById('open-terms').addEventListener('click', () => modal.classList.add('active'));
 document.getElementById('close-terms').addEventListener('click', () => modal.classList.remove('active'));
 
+
+// 初回シミュレーション実行
 updateSimulation();
