@@ -1,33 +1,63 @@
 <!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab - 篠ノ井乗務区</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #00ffcc;
+            border-bottom: 2px solid #00ffcc;
+            padding-bottom: 10px;
+        }
+        .project-card {
+            background: #333;
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 5px solid #ffcc00;
+            text-align: left;
+        }
+        .status {
+            display: inline-block;
+            background: #ffcc00;
+            color: #000;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
 
-<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Under Construction / 制作中</title> <style> body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; background-color: #ffffff; color: #333333; line-height: 1.8; }
+<div class="container">
+    <h1>篠ノ井乗務区 - LAB</h1>
+    <p>ここでは、現代の技術を融合させた実験的なツールや試作品を開発・公開していきます。</p>
 
-.container { text-align: center; padding: 20px; max-width: 600px; width: 90%; }
+    <div class="project-card">
+        <span class="status">PROJECT 01: 開発企画中</span>
+        <h3>撮影地光線状態シミュレーター（仮）</h3>
+        <p>日時と線路の方角から、列車の側面に綺麗に光が当たるか（順光・逆光）を計算・可視化するクリエイター向けツールを開発予定です。</p>
+    </div>
 
-.main-text { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; }
+    <p style="color: #888; font-size: 0.9rem; margin-top: 30px;">公開まで今しばらくお待ちください。</p>
+</div>
 
-.sub-text { font-size: 1rem; color: #666666; margin-bottom: 30px; }
-
-.translate-widget { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee; }
-
-@media (max-width: 480px) { .main-text { font-size: 1.4rem; } } </style>
-
-</head> <body>
-
-<div class="container"> <div class="main-text"> 現在このページは制作中です
-
-
-Under Construction </div>
-
-<div class="sub-text"> ただいま新しいコンテンツを準備しております。公開まで今しばらくお待ちください。
-
-
-We are currently preparing new content. Please check back soon. </div>
-
-<div class="translate-widget"> <div id="google_translate_element"></div> </div> </div>
-
-<script type="text/javascript"> function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'ja', layout: google.translate.TranslateElement.InlineLayout.SIMPLE }, 'google_translate_element'); } </script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-</body> </html>
+</body>
+</html>
