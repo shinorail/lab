@@ -1,14 +1,15 @@
 // ─── 1. 日付と時刻の自動初期設定 ───
 const now = new Date();
 
-// ポータル画面などで入力欄が存在しない場合の「型エラーによる機能停止」を防ぐ安全設計（アクセシビリティ担保）
 const dateEl = document.getElementById('date');
 const timeEl = document.getElementById('time');
 const trackDirEl = document.getElementById('track-dir');
 const btnLocationEl = document.getElementById('btn-location');
 
-if (dateEl) dateEl.valueAsDate = now;
-
+// シミュレーター画面の時だけ初期値をセット
+if (dateEl) {
+    dateEl.valueAsDate = now;
+}
 if (timeEl) {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -20,12 +21,13 @@ let currentLat = 36.5775;
 let currentLng = 138.1378;
 
 
-// ─── 2. ハンバーガーメニューの開閉制御 ───
+// ─── 2. ハンバーガーメニューの開閉制御（全画面共通） ───
 const toggleBtn = document.getElementById('nav-toggle');
 const gNav = document.getElementById('global-nav');
 
 if (toggleBtn && gNav) {
-    toggleBtn.addEventListener('click', () => {
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // ドキュメント側のクリックイベント連動を防止
         toggleBtn.classList.toggle('active');
         gNav.classList.toggle('active');
     });
@@ -61,14 +63,18 @@ if (btnLocationEl) {
                 }
                 btnLocationEl.innerText = "📍 現在地を取得して計算";
                 
+                // ★【復活機能】現在地を取得した際、その瞬間の最新時刻・日付に自動更新
                 const latestNow = new Date();
-                if (timeEl && dateEl) {
+                if (timeEl) {
                     const latestHours = String(latestNow.getHours()).padStart(2, '0');
                     const latestMinutes = String(latestNow.getMinutes()).padStart(2, '0');
                     timeEl.value = `${latestHours}:${latestMinutes}`;
+                }
+                if (dateEl) {
                     dateEl.valueAsDate = latestNow;
                 }
 
+                // 位置情報更新後にシミュレーションを即座に再計算
                 updateSimulation();
             },
             (error) => {
@@ -82,7 +88,7 @@ if (btnLocationEl) {
 
 // ─── 4. 太陽光線シミュレーションコアロジック ───
 function updateSimulation() {
-    // 画面内に対象の要素がある場合のみ処理を続行する防衛策
+    // シミュレーター用の必須要素が1つでも欠けていれば（＝ポータル画面なら）何もせず終了
     if (!dateEl || !timeEl || !trackDirEl) return;
 
     const dateInput = dateEl.value;
@@ -91,9 +97,14 @@ function updateSimulation() {
 
     if (!dateInput || !timeInput) return;
 
+    // 日付と時刻を正しく結合してDateオブジェクトを生成
     const dateTime = new Date(`${dateInput}T${timeInput}`);
 
     // SunCalcライブラリを利用して太陽方位・高度を計算
+    if (typeof SunCalc === 'undefined') {
+        console.error("SunCalcライブラリが読み込まれていません。");
+        return;
+    }
     const sunPos = SunCalc.getPosition(dateTime, currentLat, currentLng);
     
     // ラジアンから度数に変換、および北を0度とする補正
@@ -165,7 +176,7 @@ if (timeEl) timeEl.addEventListener('change', updateSimulation);
 if (trackDirEl) trackDirEl.addEventListener('change', updateSimulation);
 
 
-// ─── 6. 利用規約モーダル制御（重複を一本化） ───
+// ─── 6. 利用規約モーダル制御（全画面共通のバックアップ命令） ───
 const termsModal = document.getElementById('terms-modal');
 const openTermsBtn = document.getElementById('open-terms');
 const closeTermsBtn = document.getElementById('close-terms');
@@ -178,5 +189,5 @@ if (closeTermsBtn && termsModal) {
 }
 
 
-// 初回シミュレーション実行
+// 初回シミュレーション実行（必須要素が揃っている画面でのみ内部で自動実行されます）
 updateSimulation();
