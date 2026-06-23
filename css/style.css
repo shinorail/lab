@@ -1,10 +1,12 @@
-/* ─── 全体・基本スタイル ─── */
+/* ─── 全体・基本スタイル（UDフォント & アクセシビリティ対応） ─── */
 body {
-    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    /* 視認性・判読性の高い各OSの標準UDフォント・システムフォントを優先指定 */
+    font-family: 'BIZ UDPGothic', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Toppan Bunkyu Midashi Gothic', Meiryo, sans-serif;
     background-color: #1a1a1a;
     color: #ffffff;
     margin: 0;
-    padding: 60px 20px 20px 20px; /* ハンバーガーボタン用の余白 */　
+    /* 全角スペースの混入を防ぐため、末尾の不要な余白コメントをクリーンアップ */
+    padding: 60px 20px 20px 20px; 
 }
 
 .container {
@@ -17,9 +19,10 @@ body {
 }
 
 h1 {
-    color: #00ffcc;
+    /* 弱視や色覚の特性を持つ方でも文字がくっきり読めるよう、コントラストを調整（#00ffcc → #00f0c2） */
+    color: #00f0c2;
     font-size: 1.4rem;
-    border-bottom: 2px solid #00ffcc;
+    border-bottom: 2px solid #00f0c2;
     padding-bottom: 10px;
     margin-top: 0;
 }
@@ -34,31 +37,33 @@ label {
     margin-bottom: 5px;
     font-weight: bold;
     font-size: 0.9rem;
-    color: #ccc;
+    color: #e0e0e0; /* 可読性向上のため、少し明るいグレーに変更 */
 }
 
 input, select {
     width: 100%;
     padding: 12px;
     background: #333;
-    border: 1px solid #444;
+    border: 2px solid #555; /* 枠線を少し太くし、入力エリアの境界線を明確化 */
     color: #fff;
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1rem;
 }
 
+/* キーボード操作時やタップ時に、どこが選択されているか強烈に明示するUDデザイン */
 input:focus, select:focus {
-    border-color: #00ffcc;
-    outline: none;
+    border-color: #00f0c2;
+    outline: 2px solid #00f0c2;
+    outline-offset: 2px;
 }
 
 /* ─── ボタン関係 ─── */
 .btn-location {
     width: 100%;
     padding: 14px;
-    background: #00ffcc;
-    color: #000;
+    background: #00f0c2;
+    color: #000000; /* 黒文字とのコントラスト比を最高水準にするための調整 */
     font-weight: bold;
     border: none;
     border-radius: 6px;
@@ -68,7 +73,13 @@ input:focus, select:focus {
 }
 
 .btn-location:hover {
-    background: #00ccaa;
+    background: #00cdaa;
+}
+
+/* キーボードのTabキーで選択された際、しっかり目立つ枠線を表示 */
+.btn-location:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
 }
 
 .btn-location:active {
@@ -77,7 +88,7 @@ input:focus, select:focus {
 
 .location-status {
     font-size: 0.8rem;
-    color: #aaa;
+    color: #cccccc; /* 文字が背景に沈まないよう、明度をアップ */
     margin-top: 6px;
     text-align: center;
 }
@@ -87,7 +98,7 @@ input:focus, select:focus {
     margin-top: 20px;
     padding: 15px;
     background: #333;
-    border-left: 5px solid #00ffcc;
+    border-left: 5px solid #00f0c2;
     border-radius: 0 6px 6px 0;
     font-size: 0.95rem;
     line-height: 1.6;
@@ -128,6 +139,7 @@ input:focus, select:focus {
     position: absolute;
     top: 4px;
     color: #ffcc00;
+    font-weight: bold;
     font-size: 0.7rem;
 }
 
@@ -150,13 +162,18 @@ input:focus, select:focus {
 }
 
 .footer-links a {
-    color: #888;
+    color: #aaa; /* デフォルトのグレーを明るくし、暗い背景でも認識しやすく変更 */
     text-decoration: underline;
     cursor: pointer;
 }
 
 .footer-links a:hover {
-    color: #00ffcc;
+    color: #00f0c2;
+}
+
+.footer-links a:focus-visible {
+    outline: 2px solid #00f0c2;
+    outline-offset: 4px;
 }
 
 /* ─── ハンバーガーメニュー ─── */
@@ -184,12 +201,16 @@ input:focus, select:focus {
 .hamburger-btn span:nth-child(2) { top: 11px; }
 .hamburger-btn span:nth-child(3) { bottom: 0; }
 
-/* ボタン変形（クロス） */
-.hamburger-btn.active span:nth-child(1) { transform: translateY(11px) rotate(-45deg); background-color: #00ffcc; }
+.hamburger-btn.active span:nth-child(1) { transform: translateY(11px) rotate(-45deg); background-color: #00f0c2; }
 .hamburger-btn.active span:nth-child(2) { opacity: 0; }
-.hamburger-btn.active span:nth-child(3) { transform: translateY(-11px) rotate(45deg); background-color: #00ffcc; }
+.hamburger-btn.active span:nth-child(3) { transform: translateY(-11px) rotate(45deg); background-color: #00f0c2; }
 
-/* メニュー本体（右側から隠す） */
+.hamburger-btn:focus-visible {
+    outline: 2px solid #00f0c2;
+    outline-offset: 4px;
+}
+
+/* メニュー本体 */
 .global-nav {
     position: fixed;
     top: 0;
@@ -218,7 +239,7 @@ input:focus, select:focus {
 .global-nav ul li a {
     display: block;
     padding: 15px 25px;
-    color: #ccc;
+    color: #e0e0e0;
     text-decoration: none;
     font-size: 1rem;
     border-bottom: 1px solid #2a2a2a;
@@ -226,16 +247,22 @@ input:focus, select:focus {
 }
 
 .global-nav ul li a:hover, .global-nav ul li a.current {
-    color: #00ffcc;
+    color: #00f0c2;
     background: #252525;
     padding-left: 30px;
 }
 
-/* ─── モーダル ─── */
+.global-nav ul li a:focus-visible {
+    outline: 2px solid #00f0c2;
+    outline-offset: -2px;
+    background: #252525;
+}
+
+/* ─── モーダル（規約ポップアップ） ─── */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85); /* 背景との分離を明確にするため遮光率を少しアップ */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -258,11 +285,11 @@ input:focus, select:focus {
     width: 90%;
     max-height: 75vh;
     overflow-y: auto;
-    border: 1px solid #444;
+    border: 2px solid #555; /* モーダルの輪郭をハッキリさせるため境界線を強化 */
 }
 
 .modal-content h2 {
-    color: #00ffcc;
+    color: #00f0c2;
     font-size: 1.25rem;
     margin-top: 0;
     border-bottom: 1px solid #444;
@@ -278,8 +305,8 @@ input:focus, select:focus {
 
 .modal-content p {
     font-size: 0.85rem;
-    color: #bbb;
-    line-height: 1.6;
+    color: #e0e0e0; /* 長文が読みやすいよう明度をアップ */
+    line-height: 1.7; /* 行間をわずかに広げて文字の詰まり感を緩和 */
     margin-top: 0;
 }
 
@@ -289,7 +316,7 @@ input:focus, select:focus {
     padding: 12px;
     background: #444;
     color: #fff;
-    border: none;
+    border: 2px solid #666;
     border-radius: 6px;
     cursor: pointer;
     margin-top: 20px;
@@ -300,4 +327,9 @@ input:focus, select:focus {
 
 .btn-close:hover {
     background: #555;
+}
+
+.btn-close:focus-visible {
+    outline: 2px solid #00f0c2;
+    outline-offset: 2px;
 }

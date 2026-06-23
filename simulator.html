@@ -25,7 +25,7 @@
     </nav>
 
     <div class="container">
-        <a href="index.html" style="color: #00ffcc; text-decoration: none; font-size: 0.9rem;">◀ LABホームへ戻る</a>
+        <a href="index.html" style="color: #00f0c2; text-decoration: none; font-size: 0.9rem; font-weight: bold;">◀ LABホームへ戻る</a>
         <h1 style="margin-top: 10px;">撮影地光線状態シミュレーター (β)</h1>
         
         <div class="form-group">
@@ -64,7 +64,7 @@
         <div class="result-box">
             <div><strong>太陽の方位角:</strong> <span id="sun-azimuth">-</span>°</div>
             <div><strong>太陽の高度:</strong> <span id="sun-altitude">-</span>°</div>
-            <div style="margin-top: 10px;"><strong>光線状態の目安:</strong> <span id="light-condition" style="color: #ffcc00; font-weight: bold;">-</span></div>
+            <div style="margin-top: 10px;"><strong>光線状態の目安:</strong> <span id="light-condition" style="color: #ffd700; font-weight: bold;">-</span></div>
         </div>
 
         <label style="margin-top: 20px; display: block;">位置関係（上空から見たイメージ）</label>
@@ -82,7 +82,7 @@
         <div class="modal-content">
             <h2>利用規約・プライバシーポリシー</h2>
             <h3>【利用規約】</h3>
-            <p><strong>第1条（ツールの利用について）</strong><br>本ツールは、鉄道撮影の補助を目的とした試作品（ベータ版）です。計算結果は目安であり、実際の気象条件や現地の障害物による影を完全に保証するものではありません。</p>
+            <p><strong>第1条（ツールの利用について）</strong><br>本ツールは、鉄道撮影 of 補助を目的とした試作品（ベータ版）です。計算結果は目安であり、実際の気象条件や現地の障害物による影を完全に保証するものではありません。</p>
             <p><strong>第2条（免責事項）</strong><br>本ツールの利用により生じた損害やトラブル（撮影地でのトラブル等）について、当グループは一切の責任を負いません。現地では鉄道会社のルールやマナーを厳守してください。</p>
             <h3>【プライバシーポリシー】</h3>
             <p><strong>第1条（位置情報の取得）</strong><br>本ツールでは、太陽の角度を計算するため、ブラウザの位置情報サービスを利用します。</p>
@@ -91,7 +91,19 @@
         </div>
     </div>
 
+    <script>
+        // HTML側で確実にモーダルを動かす設定
+        const openBtn = document.getElementById('open-terms');
+        const closeBtn = document.getElementById('close-terms');
+        const termsModal = document.getElementById('terms-modal');
+
+        if(openBtn && termsModal) {
+            openBtn.addEventListener('click', () => termsModal.classList.add('active'));
+        }
+        if(closeBtn && termsModal) {
+            closeBtn.addEventListener('click', () => termsModal.classList.remove('active'));
+        }
+    </script>
     <script src="js/simulator.js"></script>
 </body>
 </html>
-　

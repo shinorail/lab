@@ -1,13 +1,19 @@
 // ─── 1. 日付と時刻の自動初期設定 ───
 const now = new Date();
 
-// 日付を「YYYY-MM-DD」形式にして自動入力
-document.getElementById('date').valueAsDate = now;
+// ポータル画面などで入力欄が存在しない場合の「型エラーによる機能停止」を防ぐ安全設計（アクセシビリティ担保）
+const dateEl = document.getElementById('date');
+const timeEl = document.getElementById('time');
+const trackDirEl = document.getElementById('track-dir');
+const btnLocationEl = document.getElementById('btn-location');
 
-// 時刻を「HH:MM」形式にして自動入力
-const hours = String(now.getHours()).padStart(2, '0');
-const minutes = String(now.getMinutes()).padStart(2, '0');
-document.getElementById('time').value = `${hours}:${minutes}`;
+if (dateEl) dateEl.valueAsDate = now;
+
+if (timeEl) {
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    timeEl.value = `${hours}:${minutes}`;
+}
 
 // 位置情報の初期値（初期値は篠ノ井駅付近）
 let currentLat = 36.5775;
@@ -18,60 +24,70 @@ let currentLng = 138.1378;
 const toggleBtn = document.getElementById('nav-toggle');
 const gNav = document.getElementById('global-nav');
 
-toggleBtn.addEventListener('click', () => {
-    toggleBtn.classList.toggle('active');
-    gNav.classList.toggle('active');
-});
+if (toggleBtn && gNav) {
+    toggleBtn.addEventListener('click', () => {
+        toggleBtn.classList.toggle('active');
+        gNav.classList.toggle('active');
+    });
 
-// メニューの外側をクリックしたら閉じる処理
-document.addEventListener('click', (e) => {
-    if (!toggleBtn.contains(e.target) && !gNav.contains(e.target)) {
-        toggleBtn.classList.remove('active');
-        gNav.classList.remove('active');
-    }
-});
+    // メニューの外側をクリックしたら閉じる処理
+    document.addEventListener('click', (e) => {
+        if (!toggleBtn.contains(e.target) && !gNav.contains(e.target)) {
+            toggleBtn.classList.remove('active');
+            gNav.classList.remove('active');
+        }
+    });
+}
 
 
 // ─── 3. 現在地取得（GPS）処理 ───
-document.getElementById('btn-location').addEventListener('click', () => {
-    if (!navigator.geolocation) {
-        alert("お使いのブラウザは位置情報の取得に対応していません。");
-        return;
-    }
-
-    document.getElementById('btn-location').innerText = "位置情報取得中...";
-
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            currentLat = position.coords.latitude;
-            currentLng = position.coords.longitude;
-            
-            document.getElementById('current-lat-lng').innerText = 
-                `緯度: ${currentLat.toFixed(4)}, 経度: ${currentLng.toFixed(4)}`;
-            document.getElementById('btn-location').innerText = "📍 現在地を取得して計算";
-            
-            // ★現在地を取得した際にも、その瞬間の最新時刻に自動更新して再計算する
-            const latestNow = new Date();
-            const latestHours = String(latestNow.getHours()).padStart(2, '0');
-            const latestMinutes = String(latestNow.getMinutes()).padStart(2, '0');
-            document.getElementById('time').value = `${latestHours}:${latestMinutes}`;
-            document.getElementById('date').valueAsDate = latestNow;
-
-            updateSimulation();
-        },
-        (error) => {
-            alert("位置情報の取得に失敗しました。ブラウザの位置情報許可を確認してください。");
-            document.getElementById('btn-location').innerText = "📍 現在地を取得して計算";
+if (btnLocationEl) {
+    btnLocationEl.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            alert("お使いのブラウザは位置情報の取得に対応していません。");
+            return;
         }
-    );
-});
+
+        btnLocationEl.innerText = "位置情報取得中...";
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                currentLat = position.coords.latitude;
+                currentLng = position.coords.longitude;
+                
+                const latLngEl = document.getElementById('current-lat-lng');
+                if (latLngEl) {
+                    latLngEl.innerText = `緯度: ${currentLat.toFixed(4)}, 経度: ${currentLng.toFixed(4)}`;
+                }
+                btnLocationEl.innerText = "📍 現在地を取得して計算";
+                
+                const latestNow = new Date();
+                if (timeEl && dateEl) {
+                    const latestHours = String(latestNow.getHours()).padStart(2, '0');
+                    const latestMinutes = String(latestNow.getMinutes()).padStart(2, '0');
+                    timeEl.value = `${latestHours}:${latestMinutes}`;
+                    dateEl.valueAsDate = latestNow;
+                }
+
+                updateSimulation();
+            },
+            (error) => {
+                alert("位置情報の取得に失敗しました。ブラウザの位置情報許可を確認してください。");
+                btnLocationEl.innerText = "📍 現在地を取得して計算";
+            }
+        );
+    });
+}
 
 
 // ─── 4. 太陽光線シミュレーションコアロジック ───
 function updateSimulation() {
-    const dateInput = document.getElementById('date').value;
-    const timeInput = document.getElementById('time').value;
-    const trackDir = parseFloat(document.getElementById('track-dir').value);
+    // 画面内に対象の要素がある場合のみ処理を続行する防衛策
+    if (!dateEl || !timeEl || !trackDirEl) return;
+
+    const dateInput = dateEl.value;
+    const timeInput = timeEl.value;
+    const trackDir = parseFloat(trackDirEl.value);
 
     if (!dateInput || !timeInput) return;
 
@@ -84,16 +100,22 @@ function updateSimulation() {
     let sunAzimuthDeg = (sunPos.azimuth * 180 / Math.PI) + 180; 
     let sunAltitudeDeg = sunPos.altitude * 180 / Math.PI;
 
-    document.getElementById('sun-azimuth').innerText = sunAzimuthDeg.toFixed(1);
-    document.getElementById('sun-altitude').innerText = sunAltitudeDeg.toFixed(1);
+    const azimuthEl = document.getElementById('sun-azimuth');
+    const altitudeEl = document.getElementById('sun-altitude');
+    const conditionEl = document.getElementById('light-condition');
+    const sunMeshEl = document.getElementById('sun-mesh');
+    const trainMeshEl = document.getElementById('train-mesh');
+
+    if (azimuthEl) azimuthEl.innerText = sunAzimuthDeg.toFixed(1);
+    if (altitudeEl) altitudeEl.innerText = sunAltitudeDeg.toFixed(1);
 
     // 日没判定
     if (sunAltitudeDeg < 0) {
-        document.getElementById('light-condition').innerText = "夜間（日没しています）";
-        document.getElementById('sun-mesh').style.display = 'none';
+        if (conditionEl) conditionEl.innerText = "夜間（日没しています）";
+        if (sunMeshEl) sunMeshEl.style.display = 'none';
         return;
     } else {
-        document.getElementById('sun-mesh').style.display = 'block';
+        if (sunMeshEl) sunMeshEl.style.display = 'block';
     }
 
     // 列車から見た太陽の相対角度
@@ -119,33 +141,41 @@ function updateSimulation() {
         condition = "右前方から光（面デカ・側面やや弱）";
     }
     
-    document.getElementById('light-condition').innerText = condition;
+    if (conditionEl) conditionEl.innerText = condition;
 
     // ビジュアル反映（列車の回転）
-    document.getElementById('train-mesh').style.transform = `rotate(${trackDir}deg)`;
+    if (trainMeshEl) trainMeshEl.style.transform = `rotate(${trackDir}deg)`;
     
     // 太陽の円周上配置
-    const radius = 65;
-    const sunRad = (sunAzimuthDeg - 90) * Math.PI / 180;
-    const sunX = radius * Math.cos(sunRad);
-    const sunY = radius * Math.sin(sunRad);
-    
-    const sunMesh = document.getElementById('sun-mesh');
-    sunMesh.style.left = `calc(50% + ${sunX}px - 11px)`;
-    sunMesh.style.top = `calc(50% + ${sunY}px - 11px)`;
+    if (sunMeshEl) {
+        const radius = 65;
+        const sunRad = (sunAzimuthDeg - 90) * Math.PI / 180;
+        const sunX = radius * Math.cos(sunRad);
+        const sunY = radius * Math.sin(sunRad);
+        
+        sunMeshEl.style.left = `calc(50% + ${sunX}px - 11px)`;
+        sunMeshEl.style.top = `calc(50% + ${sunY}px - 11px)`;
+    }
 }
 
 
 // ─── 5. 各種イベントリスナー登録 ───
-document.getElementById('date').addEventListener('change', updateSimulation);
-document.getElementById('time').addEventListener('change', updateSimulation);
-document.getElementById('track-dir').addEventListener('change', updateSimulation);
+if (dateEl) dateEl.addEventListener('change', updateSimulation);
+if (timeEl) timeEl.addEventListener('change', updateSimulation);
+if (trackDirEl) trackDirEl.addEventListener('change', updateSimulation);
 
 
-// ─── 6. 利用規約モーダル制御 ───
-const modal = document.getElementById('terms-modal');
-document.getElementById('open-terms').addEventListener('click', () => modal.classList.add('active'));
-document.getElementById('close-terms').addEventListener('click', () => modal.classList.remove('active'));
+// ─── 6. 利用規約モーダル制御（重複を一本化） ───
+const termsModal = document.getElementById('terms-modal');
+const openTermsBtn = document.getElementById('open-terms');
+const closeTermsBtn = document.getElementById('close-terms');
+
+if (openTermsBtn && termsModal) {
+    openTermsBtn.addEventListener('click', () => termsModal.classList.add('active'));
+}
+if (closeTermsBtn && termsModal) {
+    closeTermsBtn.addEventListener('click', () => termsModal.classList.remove('active'));
+}
 
 
 // 初回シミュレーション実行

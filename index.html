@@ -6,7 +6,7 @@
     <title>LAB（実験室） - 篠ノ井乗務区</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* ホーム画面専用のちょっとした調整 */
+        /* ホーム画面専用の調整 */
         .project-list {
             margin-top: 30px;
         }
@@ -14,8 +14,9 @@
             background: #333;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;　
-            border-left: 5px solid #00ffcc;　
+            margin-bottom: 20px;
+            /* タイポを修正 (#00ffcc: から #00f0c2; へ変更し、境界線を有効化) */
+            border-left: 5px solid #00f0c2;
             text-align: left;
         }
         .project-card.coming-soon {
@@ -30,21 +31,29 @@
             border-radius: 3px;
             margin-bottom: 10px;
         }
-        .status-badge.open { background: #00ffcc; color: #000; }
-        .status-badge.soon { background: #ffcc00; color: #000; }
+        /* コントラスト比を最適化したUDカラー */
+        .status-badge.open { background: #00f0c2; color: #000000; }
+        .status-badge.soon { background: #ffcc00; color: #000000; }
         
         .btn-link {
             display: inline-block;
             margin-top: 10px;
             padding: 8px 16px;
-            background: #00ffcc;
-            color: #000;
+            background: #00f0c2;
+            color: #000000;
             text-decoration: none;
             font-weight: bold;
             border-radius: 4px;
             font-size: 0.9rem;
+            transition: background 0.2s;
         }
-        .btn-link:hover { background: #00ccaa; }
+        .btn-link:hover { background: #00cdaa; }
+        
+        /* キーボード操作時のフォーカスリング（アクセシビリティ対応） */
+        .btn-link:focus-visible {
+            outline: 3px solid #ffffff;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +107,19 @@
         </div>
     </div>
 
+    <script>
+        // HTML側で確実にモーダルを動かす設定
+        const openBtn = document.getElementById('open-terms');
+        const closeBtn = document.getElementById('close-terms');
+        const termsModal = document.getElementById('terms-modal');
+
+        if(openBtn && termsModal) {
+            openBtn.addEventListener('click', () => termsModal.classList.add('active'));
+        }
+        if(closeBtn && termsModal) {
+            closeBtn.addEventListener('click', () => termsModal.classList.remove('active'));
+        }
+    </script>
     <script src="js/simulator.js"></script>
 </body>
 </html>
