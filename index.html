@@ -3,9 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>撮影地光線シミュレーター（β） - 篠ノ井乗務区</title>
+    <title>LAB（実験室） - 篠ノ井乗務区</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+    <style>
+        /* ホーム画面専用のちょっとした調整 */
+        .project-list {
+            margin-top: 30px;
+        }
+        .project-card {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #00ffcc;
+            text-align: left;
+        }
+        .project-card.coming-soon {
+            border-left-color: #ffcc00;
+            opacity: 0.7;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+        .status-badge.open { background: #00ffcc; color: #000; }
+        .status-badge.soon { background: #ffcc00; color: #000; }
+        
+        .btn-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #00ffcc;
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .btn-link:hover { background: #00ccaa; }
+    </style>
 </head>
 <body>
 
@@ -25,51 +65,22 @@
     </nav>
 
     <div class="container">
-        <h1>撮影地光線状態シミュレーター (β)</h1>
+        <h1>篠ノ井乗務区 - LAB</h1>
+        <p>ここでは、現代のシステム開発・クリエイティブ技術を融合させた、実験的なツールや試作品を公開しています。</p>
         
-        <div class="form-group">
-            <label for="date">撮影日</label>
-            <input type="date" id="date">
-        </div>
-        
-        <div class="form-group">
-            <label for="time">時間</label>
-            <input type="time" id="time" value="12:00">
-        </div>
-
-        <div class="form-group">
-            <label for="track-dir">列車の進行方向（方角）</label>
-            <select id="track-dir">
-                <option value="0">北向き (0°)</option>
-                <option value="45">北東向き (45°)</option>
-                <option value="90">東向き (90°)</option>
-                <option value="135">南東向き (135°)</option>
-                <option value="180">南向き (180°)</option>
-                <option value="225">南西向き (225°)</option>
-                <option value="270">西向き (270°)</option>
-                <option value="315">北西向き (315°)</option>
-            </select>
-        </div>
-
-        <div class="form-group" style="margin-top: 20px;">
-            <button type="button" class="btn-location" id="btn-location">
-                📍 現在地を取得して計算
-            </button>
-            <div class="location-status">
-                現在の計測位置: <span id="current-lat-lng">篠ノ井駅付近 (初期値)</span>
+        <div class="project-list">
+            <div class="project-card">
+                <span class="status-badge open">公開中 (β)</span>
+                <h3>撮影地光線状態シミュレーター</h3>
+                <p>日時と線路の方角から、太陽の光が列車のどこに当たるかを計算・可視化する、クリエイター向けの補助ツールです。</p>
+                <a href="simulator.html" class="btn-link">ツールを開く ➔</a>
             </div>
-        </div>
 
-        <div class="result-box">
-            <div><strong>太陽の方位角:</strong> <span id="sun-azimuth">-</span>°</div>
-            <div><strong>太陽の高度:</strong> <span id="sun-altitude">-</span>°</div>
-            <div style="margin-top: 10px;"><strong>光線状態の目安:</strong> <span id="light-condition" style="color: #ffcc00; font-weight: bold;">-</span></div>
-        </div>
-
-        <label style="margin-top: 20px; display: block;">位置関係（上空から見たイメージ）</label>
-        <div class="visualizer">
-            <div class="train-mock" id="train-mesh">列車</div>
-            <div class="sun-indicator" id="sun-mesh"></div>
+            <div class="project-card coming-soon">
+                <span class="status-badge soon">COMING SOON</span>
+                <h3>LED発車標再現シミュレーター（仮）</h3>
+                <p>駅に設置されている電光掲示板（発車標）をブラウザ上でリアルに再現し、好きな表示を作れるツールを計画中です。</p>
+            </div>
         </div>
 
         <div class="footer-links">
@@ -80,15 +91,9 @@
     <div class="modal-overlay" id="terms-modal">
         <div class="modal-content">
             <h2>利用規約・プライバシーポリシー</h2>
-            
             <h3>【利用規約】</h3>
-            <p><strong>第1条（ツールの利用について）</strong><br>本ツールは、鉄道撮影の補助を目的とした試作品（ベータ版）です。計算結果は目安であり、実際の気象条件や現地の障害物による影を完全に保証するものではありません。</p>
-            <p><strong>第2条（免責事項）</strong><br>本ツールの利用により生じた損害やトラブル（撮影地でのトラブル等）について、当グループは一切の責任を負いません。現地では鉄道会社のルールやマナーを厳守してください。</p>
-            
-            <h3>【プライバシーポリシー】</h3>
-            <p><strong>第1条（位置情報の取得）</strong><br>本ツールでは、太陽の角度を計算するため、ブラウザの位置情報サービス（Geolocation API）を利用します。</p>
-            <p><strong>第2条（データの取り扱い）</strong><br>取得した位置情報（緯度・経度）は、ユーザーのブラウザ内での計算にのみ一時的に使用され、当グループのサーバーに送信・保存されることは一切ありません。</p>
-            
+            <p><strong>第1条（ツールの利用について）</strong><br>本ラボで公開されているツールは試作品です。計算結果や動作を完全に保証するものではありません。</p>
+            <p><strong>第2条（免責事項）</strong><br>本ラボのツールの利用により生じた損害やトラブルについて、当グループは一切の責任を負いません。</p>
             <button class="btn-close" id="close-terms">閉じる</button>
         </div>
     </div>
