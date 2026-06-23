@@ -1,0 +1,80 @@
+/* ─── LED発車標全体 ─── */
+.led-board {
+    background-color: #050505; /* 漆黒の筐体 */
+    border: 6px solid #222;    /* 枠枠 */
+    border-radius: 4px;
+    padding: 10px 15px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+    /* ドットマトリクス風の格子背景を薄く重ねてリアルに */
+    background-image: linear-gradient(rgba(0,0,0,0.3) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,0,0,0.3) 1px, transparent 1px);
+    background-size: 3px 3px;
+}
+
+/* ─── 各行のレイアウト ─── */
+.led-row {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    border-bottom: 2px solid #111;
+    font-family: 'Courier New', Courier, monospace, sans-serif;
+    font-weight: bold;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    overflow: hidden;
+}
+
+.led-row:last-child {
+    border-bottom: none;
+    height: 35px;
+    margin-top: 5px;
+}
+
+/* 各パーツの横幅を駅の掲示板風に固定 */
+.led-time  { width: 15%; }
+.led-type  { width: 15%; text-align: center; }
+.led-name  { width: 45%; padding-left: 10px; }
+.led-car   { width: 15%; text-align: right; }
+.led-track { width: 10%; text-align: right; }
+
+/* ─── LED発光カラー（3色LED風） ─── */
+.text-orange {
+    color: #ffaa00;
+    text-shadow: 0 0 6px #ff8800;
+}
+.text-green {
+    color: #33ff33;
+    text-shadow: 0 0 6px #00cc00;
+}
+.text-red {
+    color: #ff3333;
+    text-shadow: 0 0 6px #cc0000;
+}
+
+/* ─── ✨ 流れる案内文字（無限スクロール仕様） ─── */
+.led-info-row {
+    width: 100%;
+}
+
+.led-scroll-wrap {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.led-scroll-text {
+    display: inline-block;
+    padding-left: 100%; /* 画面の右端からスタート */
+    animation: led-scroll 15s linear infinite; /* 15秒かけて左へ、無限ループ */
+}
+
+/* スクロールのアニメーション定義 */
+@keyframes led-scroll {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-100%, 0, 0); /* 文字列が完全に左に消えるまで */
+    }
+}

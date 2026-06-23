@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED発車標再現シミュレーター（α） - 篠ノ井乗務区</title>
+    <link rel="stylesheet" href="css/style.css"> <link rel="stylesheet" href="css/led.css">   </head>
+<body>
+
+    <div class="hamburger-btn" id="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <nav class="global-nav" id="global-nav">
+        <ul>
+            <li><a href="https://shinorail.github.io/">ホーム</a></li>
+            <li><a href="https://shinorail.github.io/main/">メインサイト</a></li>
+            <li><a href="https://shinorail.github.io/links/">リンク集</a></li> 
+            <li><a href="https://shinorail.github.io/lab/" class="current">ラボ（実験室）</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" style="max-width: 800px;">
+        <a href="index.html" style="color: #00f0c2; text-decoration: none; font-size: 0.9rem; font-weight: bold;">◀ LABホームへ戻る</a>
+        <h1 style="margin-top: 10px; margin-bottom: 20px;">LED発車標再現シミュレーター (α)</h1>
+
+        <div class="led-board">
+            <div class="led-row">
+                <div class="led-time text-orange">12:34</div>
+                <div class="led-type text-green">普通</div>
+                <div class="led-name text-orange">長野</div>
+                <div class="led-car text-green">6両</div>
+                <div class="led-track text-orange">3</div>
+            </div>
+
+            <div class="led-row">
+                <div class="led-time text-orange">13:02</div>
+                <div class="led-type text-red">特急</div>
+                <div class="led-name text-orange">しなの12号</div>
+                <div class="led-car text-green">8両</div>
+                <div class="led-track text-orange">2</div>
+            </div>
+
+            <div class="led-row led-info-row">
+                <div class="led-scroll-wrap text-orange">
+                    <div class="led-scroll-text" id="scroll-text">
+                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。このツールは現在開発中のアルファ版です。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-box" style="margin-top: 25px;">
+            <h3 style="margin: 0 0 10px 0; color: #00f0c2;">開発者メモ</h3>
+            <p style="font-size: 0.85rem; margin: 0; color: #ccc;">
+                次のステップで、この下のフォームから文字、列車種別（普通・快速・特急）、色、スクロール速度をリアルタイムに変更できる仕組み（JavaScript）を組み込みます。
+            </p>
+        </div>
+
+        <div class="footer-links">
+            <a id="open-terms">利用規約・プライバシーポリシー</a>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="terms-modal">
+        <div class="modal-content">
+            <h2>利用規約・プライバシーポリシー</h2>
+            <p>本ツールは駅の電光掲示板を再現するジョーク・シミュレーションツールです。</p>
+            <button class="btn-close" id="close-terms">閉じる</button>
+        </div>
+    </div>
+
+    <script src="js/simulator.js"></script>
+</body>
+</html>
