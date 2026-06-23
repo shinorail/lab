@@ -1,0 +1,303 @@
+/* ─── 全体・基本スタイル ─── */
+body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    margin: 0;
+    padding: 60px 20px 20px 20px; /* ハンバーガーボタン用の余白 */
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+h1 {
+    color: #00ffcc;
+    font-size: 1.4rem;
+    border-bottom: 2px solid #00ffcc;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* ─── フォーム関係 ─── */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+input:focus, select:focus {
+    border-color: #00ffcc;
+    outline: none;
+}
+
+/* ─── ボタン関係 ─── */
+.btn-location {
+    width: 100%;
+    padding: 14px;
+    background: #00ffcc;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-location:hover {
+    background: #00ccaa;
+}
+
+.btn-location:active {
+    transform: scale(0.98);
+}
+
+.location-status {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-top: 6px;
+    text-align: center;
+}
+
+/* ─── 結果表示エリア ─── */
+.result-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #333;
+    border-left: 5px solid #00ffcc;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* ─── 視覚化（プレビュー） ─── */
+.visualizer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 160px;
+    background: #111;
+    margin-top: 15px;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.train-mock {
+    width: 50px;
+    height: 90px;
+    background: #444;
+    border: 2px solid #fff;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+.train-mock::before {
+    content: "▲ 前";
+    position: absolute;
+    top: 4px;
+    color: #ffcc00;
+    font-size: 0.7rem;
+}
+
+.sun-indicator {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: #ff4500;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #ffcc00;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+/* ─── フッター・規約リンク ─── */
+.footer-links {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.footer-links a {
+    color: #888;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.footer-links a:hover {
+    color: #00ffcc;
+}
+
+/* ─── ハンバーガーメニュー ─── */
+.hamburger-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 26px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.hamburger-btn span {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger-btn span:nth-child(1) { top: 0; }
+.hamburger-btn span:nth-child(2) { top: 11px; }
+.hamburger-btn span:nth-child(3) { bottom: 0; }
+
+/* ボタン変形（クロス） */
+.hamburger-btn.active span:nth-child(1) { transform: translateY(11px) rotate(-45deg); background-color: #00ffcc; }
+.hamburger-btn.active span:nth-child(2) { opacity: 0; }
+.hamburger-btn.active span:nth-child(3) { transform: translateY(-11px) rotate(45deg); background-color: #00ffcc; }
+
+/* メニュー本体（右側から隠す） */
+.global-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 260px;
+    height: 100%;
+    background: #1e1e1e;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 9998;
+    padding-top: 60px;
+    box-sizing: border-box;
+}
+
+.global-nav.active {
+    transform: translateX(0);
+}
+
+.global-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.global-nav ul li a {
+    display: block;
+    padding: 15px 25px;
+    color: #ccc;
+    text-decoration: none;
+    font-size: 1rem;
+    border-bottom: 1px solid #2a2a2a;
+    transition: all 0.2s;
+}
+
+.global-nav ul li a:hover, .global-nav ul li a.current {
+    color: #00ffcc;
+    background: #252525;
+    padding-left: 30px;
+}
+
+/* ─── モーダル ─── */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10000;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #2a2a2a;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 75vh;
+    overflow-y: auto;
+    border: 1px solid #444;
+}
+
+.modal-content h2 {
+    color: #00ffcc;
+    font-size: 1.25rem;
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+}
+
+.modal-content h3 {
+    font-size: 0.95rem;
+    color: #fff;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.modal-content p {
+    font-size: 0.85rem;
+    color: #bbb;
+    line-height: 1.6;
+    margin-top: 0;
+}
+
+.btn-close {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+.btn-close:hover {
+    background: #555;
+}
