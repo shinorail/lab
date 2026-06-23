@@ -8,9 +8,7 @@
 <body>
 
     <div class="hamburger-btn" id="nav-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </div>
 
     <nav class="global-nav" id="global-nav">
@@ -22,7 +20,7 @@
         </ul>
     </nav>
 
-    <div class="container" style="max-width: 800px;">
+    <div class="container" style="max-width: 850px;">
         <a href="index.html" style="color: #00f0c2; text-decoration: none; font-size: 0.9rem; font-weight: bold;">◀ LABホームへ戻る</a>
         <h1 style="margin-top: 10px; margin-bottom: 20px;">LED発車標再現シミュレーター (α)</h1>
 
@@ -46,51 +44,95 @@
             <div class="led-row led-info-row">
                 <div class="led-scroll-wrap">
                     <div class="led-scroll-text text-orange" id="scroll-text">
-                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。このツールは現在開発中のアルファ版です。
+                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。全国のあらゆる路線の表示に対応しました。
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="control-panel" style="margin-top: 25px;">
-            <h2 style="color: #00f0c2; font-size: 1.2rem; margin-bottom: 15px;">表示内容のカスタム</h2>
+            <h2 style="color: #00f0c2; font-size: 1.2rem; margin-bottom: 15px;">表示内容のカスタム（全国路線対応版）</h2>
             
-            <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
-                <legend style="color: #ffaa00; font-weight: bold; padding: 0 5px;">1行目（先発）の変更</legend>
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <div style="flex: 1;">
-                        <label>時刻</label>
-                        <input type="text" id="input-time-1" value="12:34" maxlength="5">
+            <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: #222;">
+                <legend style="color: #ffaa00; font-weight: bold; padding: 0 5px;">1行目（先発）</legend>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 80px;">
+                        <label>発車時刻</label>
+                        <input type="text" id="input-time-1" value="12:34" placeholder="12:34">
                     </div>
-                    <div style="flex: 1;">
-                        <label>種別</label>
-                        <select id="input-type-1">
-                            <option value="普通" data-color="text-green" selected>普通（緑）</option>
-                            <option value="快速" data-color="text-orange">快速（橙）</option>
-                            <option value="特急" data-color="text-red">特急（赤）</option>
+                    <div style="flex: 1.5; min-width: 120px;">
+                        <label>種別カラー選択</label>
+                        <select id="input-color-1">
+                            <option value="text-green" selected>緑色発光（普通など）</option>
+                            <option value="text-orange">橙色発光（快速など）</option>
+                            <option value="text-red">赤色発光（特急・新幹線など）</option>
                         </select>
                     </div>
-                    <div style="flex: 2;">
+                    <div style="flex: 1.2; min-width: 100px;">
+                        <label>種別名（自由入力）</label>
+                        <input type="text" id="input-type-1" value="普通" placeholder="新快速/急行など">
+                    </div>
+                    <div style="flex: 2; min-width: 150px;">
+                        <label>列車名・行先（自由入力）</label>
+                        <input type="text" id="input-name-1" value="長野" placeholder="東京 / のぞみ1号 など">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>両数（選択するだけ）</label>
+                        <select id="input-car-1">
+                            <option value="">(表示なし)</option>
+                            </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>のりば番線</label>
+                        <select id="input-track-1">
+                            <option value="">(なし)</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: #222;">
+                <legend style="color: #ff3333; font-weight: bold; padding: 0 5px;">2行目（次発）</legend>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 80px;">
+                        <label>発車時刻</label>
+                        <input type="text" id="input-time-2" value="13:02">
+                    </div>
+                    <div style="flex: 1.5; min-width: 120px;">
+                        <label>種別カラー選択</label>
+                        <select id="input-color-2">
+                            <option value="text-green">緑色発光</option>
+                            <option value="text-orange">橙色発光</option>
+                            <option value="text-red" selected>赤色発光</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1.2; min-width: 100px;">
+                        <label>種別名</label>
+                        <input type="text" id="input-type-2" value="特急">
+                    </div>
+                    <div style="flex: 2; min-width: 150px;">
                         <label>列車名・行先</label>
-                        <input type="text" id="input-name-1" value="長野">
+                        <input type="text" id="input-name-2" value="しなの12号">
                     </div>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <div style="flex: 1;">
                         <label>両数</label>
-                        <input type="text" id="input-car-1" value="6両" maxlength="4">
+                        <select id="input-car-2"></select>
                     </div>
                     <div style="flex: 1;">
-                        <label>のりば</label>
-                        <input type="text" id="input-track-1" value="3" maxlength="2">
+                        <label>のりば番線</label>
+                        <select id="input-track-2"></select>
                     </div>
                 </div>
             </fieldset>
 
             <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 15px; margin-bottom: 15px;">
-                <legend style="color: #ffaa00; font-weight: bold; padding: 0 5px;">3行目（流れる案内）の変更</legend>
+                <legend style="color: #00f0c2; font-weight: bold; padding: 0 5px;">3行目（流れる案内）</legend>
                 <label>案内テキスト</label>
-                <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。このツールは現在開発中のアルファ版です。" style="width: 100%;">
+                <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。全国のあらゆる路線の表示に対応しました。" style="width: 100%;">
             </fieldset>
         </div>
 
