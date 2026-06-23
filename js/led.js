@@ -1,16 +1,14 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-    // ─── 1. ハンバーガーメニューの開閉制御（使い回し） ───
+    // ─── 1. 共通パーツの開閉制御 ───
     const toggleBtn = document.getElementById('nav-toggle');
     const gNav = document.getElementById('global-nav');
-
     if (toggleBtn && gNav) {
         toggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleBtn.classList.toggle('active');
             gNav.classList.toggle('active');
         });
-
         document.addEventListener('click', (e) => {
             if (!toggleBtn.contains(e.target) && !gNav.contains(e.target)) {
                 toggleBtn.classList.remove('active');
@@ -19,76 +17,106 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── 2. 利用規約モーダル制御（使い回し） ───
     const termsModal = document.getElementById('terms-modal');
     const openTermsBtn = document.getElementById('open-terms');
     const closeTermsBtn = document.getElementById('close-terms');
+    if (openTermsBtn && termsModal) openTermsBtn.addEventListener('click', () => termsModal.classList.add('active'));
+    if (closeTermsBtn && termsModal) closeTermsBtn.addEventListener('click', () => termsModal.classList.remove('active'));
 
-    if (openTermsBtn && termsModal) {
-        openTermsBtn.addEventListener('click', () => termsModal.classList.add('active'));
+
+    // ─── 2. 簡略化のための選択肢（両数・のりば）の自動生成 ───
+    const carSelect1 = document.getElementById('input-car-1');
+    const carSelect2 = document.getElementById('input-car-2');
+    const trackSelect1 = document.getElementById('input-track-1');
+    const trackSelect2 = document.getElementById('input-track-2');
+
+    // 両数の選択肢（1〜16両、および気動車・海外用の数字単体も網羅）
+    const carOptions = [];
+    for(let i = 1; i <= 16; i++) carOptions.push({ val: `${i}両`, text: `${i}両` });
+    for(let i = 1; i <= 10; i++) carOptions.push({ val: `${i} Lot`, text: `${i} (数字のみ)` }); // 私鉄や海外風用
+
+    // のりばの選択肢（1〜10番線）
+    const trackOptions = [];
+    for(let i = 1; i <= 10; i++) trackOptions.push({ val: i, text: `${i}番線` });
+
+    // 各セレクトボックスに突っ込む関数
+    function populateSelect(element, options, defaultVal) {
+        if (!element) return;
+        options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.val;
+            el.innerText = opt.text;
+            if(opt.val === defaultVal) el.selected = true;
+            element.appendChild(el);
+        });
     }
-    if (closeTermsBtn && termsModal) {
-        closeTermsBtn.addEventListener('click', () => termsModal.classList.remove('active'));
-    }
+
+    // 初期値を指定してセレクトボックスを組み立て
+    populateSelect(carSelect1, carOptions, "6両");
+    populateSelect(carSelect2, carOptions, "8両");
+    populateSelect(trackSelect1, trackOptions, 3);
+    populateSelect(trackSelect2, trackOptions, 2);
 
 
-    // ─── 3. LEDリアルタイム同期システム ───
-    
-    // 入力要素の取得
-    const inputTime1 = document.getElementById('input-time-1');
-    const inputType1 = document.getElementById('input-type-1');
-    const inputName1 = document.getElementById('input-name-1');
-    const inputCar1 = document.getElementById('input-car-1');
-    const inputTrack1 = document.getElementById('input-track-1');
-    const inputScroll = document.getElementById('input-scroll');
+    // ─── 3. 全国対応・双方向リアルタイム同期システム ───
+    function syncRow(rowNum) {
+        const inputTime = document.getElementById(`input-time-${rowNum}`);
+        const inputColor = document.getElementById(`input-color-${rowNum}`);
+        const inputType = document.getElementById(`input-type-${rowNum}`);
+        const inputName = document.getElementById(`input-name-${rowNum}`);
+        const inputCar = document.getElementById(`input-car-${rowNum}`);
+        const inputTrack = document.getElementById(`input-track-${rowNum}`);
 
-    // LED表示側の要素取得
-    const ledTime1 = document.getElementById('led-time-1');
-    const ledType1 = document.getElementById('led-type-1');
-    const ledName1 = document.getElementById('led-name-1');
-    const ledCar1 = document.getElementById('led-car-1');
-    const ledTrack1 = document.getElementById('led-track-1');
-    const ledScrollText = document.getElementById('scroll-text');
+        const ledTime = document.getElementById(`led-time-${rowNum}`);
+        const ledType = document.getElementById(`led-type-${rowNum}`);
+        const ledName = document.getElementById(`led-name-${rowNum}`);
+        const ledCar = document.getElementById(`led-car-${rowNum}`);
+        const ledTrack = document.getElementById(`led-track-${rowNum}`);
 
-    // 反映させる関数
-    function updateLED() {
-        // テキストの同期
-        if(inputTime1 && ledTime1) ledTime1.innerText = inputTime1.value;
-        if(inputName1 && ledName1) ledName1.innerText = inputName1.value;
-        if(inputCar1 && ledCar1) ledCar1.innerText = inputCar1.value;
-        if(inputTrack1 && ledTrack1) ledTrack1.innerText = inputTrack1.value;
+        // テキストの流し込み
+        if(inputTime && ledTime) ledTime.innerText = inputTime.value;
+        if(inputType && ledType) ledType.innerText = inputType.value;
+        if(inputName && ledName) ledName.innerText = inputName.value;
+        if(inputCar && ledCar) ledCar.innerText = inputCar.value;
+        if(inputTrack && ledTrack) ledTrack.innerText = inputTrack.value;
 
-        // 種別テキストと色の動的変更
-        if(inputType1 && ledType1) {
-            ledType1.innerText = inputType1.value;
-            
-            // 一旦すべての色クラスを消去
-            ledType1.classList.remove('text-green', 'text-orange', 'text-red');
-            
-            // 選択されたoptionからdata-color（色クラス名）を読み取って付与
-            const selectedOption = inputType1.options[inputType1.selectedIndex];
-            const colorClass = selectedOption.getAttribute('data-color');
-            ledType1.classList.add(colorClass);
+        // 種別のカラーリングを完全制御
+        if(inputColor && ledType) {
+            ledType.classList.remove('text-green', 'text-orange', 'text-red');
+            ledType.classList.add(inputColor.value);
         }
+    }
 
-        // 流れる案内の同期
+    // 全体を更新するマスター関数
+    function updateAllLED() {
+        syncRow(1); // 1行目を同期
+        syncRow(2); // 2行目を同期
+
+        // 3行目（流れる案内）の同期
+        const inputScroll = document.getElementById('input-scroll');
+        const ledScrollText = document.getElementById('scroll-text');
         if(inputScroll && ledScrollText) {
-            // 文字が変わったらアニメーションをリセットして再スタートさせる技
             if (ledScrollText.innerText !== inputScroll.value) {
                 ledScrollText.innerText = inputScroll.value;
                 ledScrollText.style.animation = 'none';
-                ledScrollText.offsetHeight; /* 💡ブラウザに再描画させるおまじない */
+                ledScrollText.offsetHeight; // リフロー発生
                 ledScrollText.style.animation = '';
             }
         }
     }
 
-    // フォームに文字が打ち込まれた瞬間（input）や選択が変わった瞬間（change）をすべて監視
-    if(inputTime1) inputTime1.addEventListener('input', updateLED);
-    if(inputType1) inputType1.addEventListener('change', updateLED);
-    if(inputName1) inputName1.addEventListener('input', updateLED);
-    if(inputCar1) inputCar1.addEventListener('input', updateLED);
-    if(inputTrack1) inputTrack1.addEventListener('input', updateLED);
-    if(inputScroll) inputScroll.addEventListener('input', updateLED);
+    // イベントリスナーの一括登録
+    const ids = ['input-time-1', 'input-color-1', 'input-type-1', 'input-name-1', 'input-car-1', 'input-track-1',
+                 'input-time-2', 'input-color-2', 'input-type-2', 'input-name-2', 'input-car-2', 'input-track-2', 'input-scroll'];
 
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            el.addEventListener('input', updateAllLED);
+            el.addEventListener('change', updateAllLED);
+        }
+    });
+
+    // 最初に一度実行して初期化
+    updateAllLED();
 });
