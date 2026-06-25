@@ -24,7 +24,16 @@
 
     <div class="container" style="max-width: 850px; padding: 15px;">
         <a href="index.html" style="color: #00f0c2; text-decoration: none; font-size: 0.9rem; font-weight: bold;">◀ LABホームへ戻る</a>
-        <h1 style="margin-top: 10px; margin-bottom: 15px;">LED発車標再現シミュレーター (α)</h1>
+        
+        <div class="station-sign-title">
+            <div class="sign-top-line"></div>
+            <div class="sign-main">
+                <span class="sign-en">SHINONOI CONDUCTOR'S DISTRICT LAB</span>
+                <h1 class="sign-name">LED発車標再現シミュレーター</h1>
+                <span class="sign-sub">α版・全国路線対応カスタム仕様</span>
+            </div>
+            <div class="sign-bottom-line"></div>
+        </div>
 
         <div class="led-board">
             <div class="led-clock-container">
@@ -32,35 +41,46 @@
             </div>
 
             <div class="led-row" id="row-1">
-                <div class="led-time text-orange" id="led-time-1">12:34</div>
+                <div class="led-time text-orange alternation-active" id="led-time-1" data-time="12:34" data-alt="先発">12:34</div>
                 <div class="led-type text-green" id="led-type-1">普通</div>
                 <div class="led-name text-orange" id="led-name-1">松本</div>
                 <div class="led-dest text-orange" id="led-dest-1">名古屋</div>
                 <div class="led-car text-green" id="led-car-1">6両</div>
-                <div class="led-track text-orange" id="led-track-1">3</div>
+                <div class="led-delay text-red" id="led-delay-1" style="display:none;"></div>
+                <div class="led-track text-orange" id="led-track-1">3番線</div>
             </div>
 
             <div class="led-row" id="row-2">
-                <div class="led-time text-orange" id="led-time-2">13:02</div>
+                <div class="led-time text-orange" id="led-time-2" data-time="13:02" data-alt="次発">13:02</div>
                 <div class="led-type text-red" id="led-type-2">特急</div>
                 <div class="led-name text-orange" id="led-name-2">しなの12号</div>
                 <div class="led-dest text-orange" id="led-dest-2">名古屋</div>
                 <div class="led-car text-green" id="led-car-2">8両</div>
-                <div class="led-track text-orange" id="led-track-2">2</div>
+                <div class="led-delay text-red" id="led-delay-2" style="display:none;"></div>
+                <div class="led-track text-orange" id="led-track-2">2番線</div>
             </div>
 
             <div class="led-row led-info-row">
                 <div class="led-scroll-wrap">
                     <div class="led-scroll-text text-orange" id="scroll-text">
-                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。列車名と行先を分離してさらにリアルになりました。
+                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。全機能を盛り込んだ完全版へパワーアップしました！
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="preset-section" style="margin-top: 20px; background: #222; padding: 12px; border-radius: 6px; border: 1px solid #44;">
+            <span style="color: #00f0c2; font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 8px;">🚉 ワンタップ駅表示プリセット</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="preset-btn" data-station="nagano">長野駅風</button>
+                <button class="preset-btn" data-station="matsumoto">松本駅風</button>
+                <button class="preset-btn" data-station="nagoya">名古屋駅風</button>
+                <button class="preset-btn" data-station="shinjuku">新宿駅風</button>
+            </div>
+        </div>
+
         <div class="control-panel" style="margin-top: 20px;">
             <h2 style="color: #00f0c2; font-size: 1.1rem; margin-bottom: 5px;">表示内容のカスタム</h2>
-            
             <p style="color: #ff3333; font-size: 0.8rem; margin-top: 0; margin-bottom: 15px; font-weight: bold;">
                 ⚠️ ※「自由色」を反映させるには、色選択で「★カスタム色」を選んでください。
             </p>
@@ -71,6 +91,14 @@
                     <div style="flex: 1; min-width: 65px;">
                         <label style="font-size: 0.8rem;">時刻</label>
                         <input type="text" id="input-time-1" value="12:34">
+                    </div>
+                    <div style="flex: 1.2; min-width: 90px;">
+                        <label style="font-size: 0.8rem;">時刻エリア表示</label>
+                        <select id="input-alt-1">
+                            <option value="alternate" selected>時刻と「先発」交互</option>
+                            <option value="time-only">時刻固定</option>
+                            <option value="blink">時刻点滅</option>
+                        </select>
                     </div>
                     <div style="flex: 1.5; min-width: 110px;">
                         <label style="font-size: 0.8rem;">色選択</label>
@@ -100,14 +128,24 @@
                         <input type="text" id="input-dest-1" value="名古屋">
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <div style="flex: 1;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 100px;">
                         <label style="font-size: 0.8rem;">両数</label>
-                        <select id="input-car-1"></select>
+                        <input type="text" id="input-car-1" value="6両" placeholder="例: 6両">
                     </div>
-                    <div style="flex: 1;">
+                    <div style="flex: 1.5; min-width: 140px;">
+                        <label style="font-size: 0.8rem;">遅れ状態</label>
+                        <div style="display: flex; gap: 4px;">
+                            <select id="input-delay-sw-1" style="flex: 1;">
+                                <option value="none" selected>正常（なし）</option>
+                                <option value="show">遅れ発生</option>
+                            </select>
+                            <input type="text" id="input-delay-txt-1" value="5分遅れ" style="flex: 1.5;" placeholder="5分遅れ">
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 100px;">
                         <label style="font-size: 0.8rem;">のりば番線</label>
-                        <select id="input-track-1"></select>
+                        <input type="text" id="input-track-1" value="3番線" placeholder="例: 1番線">
                     </div>
                 </div>
             </fieldset>
@@ -118,6 +156,14 @@
                     <div style="flex: 1; min-width: 65px;">
                         <label style="font-size: 0.8rem;">時刻</label>
                         <input type="text" id="input-time-2" value="13:02">
+                    </div>
+                    <div style="flex: 1.2; min-width: 90px;">
+                        <label style="font-size: 0.8rem;">時刻エリア表示</label>
+                        <select id="input-alt-2">
+                            <option value="alternate" selected>時刻と「次発」交互</option>
+                            <option value="time-only">時刻固定</option>
+                            <option value="blink">時刻点滅</option>
+                        </select>
                     </div>
                     <div style="flex: 1.5; min-width: 110px;">
                         <label style="font-size: 0.8rem;">色選択</label>
@@ -147,14 +193,24 @@
                         <input type="text" id="input-dest-2" value="名古屋">
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <div style="flex: 1;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 100px;">
                         <label style="font-size: 0.8rem;">両数</label>
-                        <select id="input-car-2"></select>
+                        <input type="text" id="input-car-2" value="8両" placeholder="例: 8両">
                     </div>
-                    <div style="flex: 1;">
+                    <div style="flex: 1.5; min-width: 140px;">
+                        <label style="font-size: 0.8rem;">遅れ状態</label>
+                        <div style="display: flex; gap: 4px;">
+                            <select id="input-delay-sw-2" style="flex: 1;">
+                                <option value="none" selected>正常（なし）</option>
+                                <option value="show">遅れ発生</option>
+                            </select>
+                            <input type="text" id="input-delay-txt-2" value="約20分遅れ" style="flex: 1.5;" placeholder="約20分遅れ">
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 100px;">
                         <label style="font-size: 0.8rem;">のりば番線</label>
-                        <select id="input-track-2"></select>
+                        <input type="text" id="input-track-2" value="2番線" placeholder="例: 2番線">
                     </div>
                 </div>
             </fieldset>
@@ -164,7 +220,7 @@
                 <div style="display: flex; gap: 10px; margin-bottom: 5px;">
                     <div style="flex: 3;">
                         <label style="font-size: 0.8rem;">案内テキスト</label>
-                        <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。列車名と行先を分離してさらにリアルになりました。" style="width: 100%;">
+                        <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。全機能を盛り込んだ完全版へパワーアップしました！" style="width: 100%;">
                     </div>
                     <div style="flex: 1; min-width: 110px;">
                         <label style="font-size: 0.8rem;">案内文の色</label>
