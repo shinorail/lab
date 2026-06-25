@@ -34,7 +34,8 @@
             <div class="led-row" id="row-1">
                 <div class="led-time text-orange" id="led-time-1">12:34</div>
                 <div class="led-type text-green" id="led-type-1">普通</div>
-                <div class="led-name text-orange" id="led-name-1">長野</div>
+                <div class="led-name text-orange" id="led-name-1">松本</div>
+                <div class="led-dest text-orange" id="led-dest-1">名古屋</div>
                 <div class="led-car text-green" id="led-car-1">6両</div>
                 <div class="led-track text-orange" id="led-track-1">3</div>
             </div>
@@ -43,6 +44,7 @@
                 <div class="led-time text-orange" id="led-time-2">13:02</div>
                 <div class="led-type text-red" id="led-type-2">特急</div>
                 <div class="led-name text-orange" id="led-name-2">しなの12号</div>
+                <div class="led-dest text-orange" id="led-dest-2">名古屋</div>
                 <div class="led-car text-green" id="led-car-2">8両</div>
                 <div class="led-track text-orange" id="led-track-2">2</div>
             </div>
@@ -50,7 +52,7 @@
             <div class="led-row led-info-row">
                 <div class="led-scroll-wrap">
                     <div class="led-scroll-text text-orange" id="scroll-text">
-                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。
+                        【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。列車名と行先を分離してさらにリアルになりました。
                     </div>
                 </div>
             </div>
@@ -62,32 +64,36 @@
             <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 12px; margin-bottom: 15px; background: #222;">
                 <legend style="color: #ffaa00; font-weight: bold; padding: 0 5px; font-size: 0.9rem;">1行目（先発）</legend>
                 <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 70px;">
+                    <div style="flex: 1; min-width: 65px;">
                         <label style="font-size: 0.8rem;">時刻</label>
                         <input type="text" id="input-time-1" value="12:34">
                     </div>
-                    <div style="flex: 1.5; min-width: 120px;">
+                    <div style="flex: 1.5; min-width: 110px;">
                         <label style="font-size: 0.8rem;">色選択</label>
                         <select id="input-color-1">
                             <option value="text-green" selected>緑色</option>
                             <option value="text-orange">橙色</option>
                             <option value="text-red">赤色</option>
-                            <option value="text-blue">青色 (🆕)</option>
-                            <option value="text-pink">ピンク (🆕)</option>
-                            <option value="custom">★個人カスタム色</option>
+                            <option value="text-blue">青色</option>
+                            <option value="text-pink">ピンク</option>
+                            <option value="custom">★カスタム色</option>
                         </select>
                     </div>
-                    <div style="flex: 0.5; min-width: 50px; text-align: center;" id="custom-picker-block-1">
+                    <div style="flex: 0.5; min-width: 45px; text-align: center;" id="custom-picker-block-1">
                         <label style="font-size: 0.8rem;">自由色</label>
                         <input type="color" id="input-picker-1" value="#ffff00" style="padding:0; height:38px; cursor:pointer;">
                     </div>
-                    <div style="flex: 1.2; min-width: 90px;">
+                    <div style="flex: 1.2; min-width: 85px;">
                         <label style="font-size: 0.8rem;">種別名</label>
                         <input type="text" id="input-type-1" value="普通">
                     </div>
-                    <div style="flex: 2; min-width: 130px;">
-                        <label style="font-size: 0.8rem;">列車名・行先</label>
-                        <input type="text" id="input-name-1" value="長野">
+                    <div style="flex: 1.5; min-width: 110px;">
+                        <label style="font-size: 0.8rem;">列車名(空欄可)</label>
+                        <input type="text" id="input-name-1" value="松本">
+                    </div>
+                    <div style="flex: 1.5; min-width: 110px;">
+                        <label style="font-size: 0.8rem;">行先</label>
+                        <input type="text" id="input-dest-1" value="名古屋">
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
@@ -105,32 +111,36 @@
             <fieldset style="border: 1px solid #555; border-radius: 6px; padding: 12px; margin-bottom: 15px; background: #222;">
                 <legend style="color: #ff3333; font-weight: bold; padding: 0 5px; font-size: 0.9rem;">2行目（次発）</legend>
                 <div style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 70px;">
+                    <div style="flex: 1; min-width: 65px;">
                         <label style="font-size: 0.8rem;">時刻</label>
                         <input type="text" id="input-time-2" value="13:02">
                     </div>
-                    <div style="flex: 1.5; min-width: 120px;">
+                    <div style="flex: 1.5; min-width: 110px;">
                         <label style="font-size: 0.8rem;">色選択</label>
                         <select id="input-color-2">
                             <option value="text-green">緑色</option>
                             <option value="text-orange">橙色</option>
                             <option value="text-red" selected>赤色</option>
-                            <option value="text-blue">青色 (🆕)</option>
-                            <option value="text-pink">ピンク (🆕)</option>
-                            <option value="custom">★個人カスタム色</option>
+                            <option value="text-blue">青色</option>
+                            <option value="text-pink">ピンク</option>
+                            <option value="custom">★カスタム色</option>
                         </select>
                     </div>
-                    <div style="flex: 0.5; min-width: 50px; text-align: center;" id="custom-picker-block-2">
+                    <div style="flex: 0.5; min-width: 45px; text-align: center;" id="custom-picker-block-2">
                         <label style="font-size: 0.8rem;">自由色</label>
                         <input type="color" id="input-picker-2" value="#ff00ff" style="padding:0; height:38px; cursor:pointer;">
                     </div>
-                    <div style="flex: 1.2; min-width: 90px;">
+                    <div style="flex: 1.2; min-width: 85px;">
                         <label style="font-size: 0.8rem;">種別名</label>
                         <input type="text" id="input-type-2" value="特急">
                     </div>
-                    <div style="flex: 2; min-width: 130px;">
-                        <label style="font-size: 0.8rem;">列車名・行先</label>
+                    <div style="flex: 1.5; min-width: 110px;">
+                        <label style="font-size: 0.8rem;">列車名(空欄可)</label>
                         <input type="text" id="input-name-2" value="しなの12号">
+                    </div>
+                    <div style="flex: 1.5; min-width: 110px;">
+                        <label style="font-size: 0.8rem;">行先</label>
+                        <input type="text" id="input-dest-2" value="名古屋">
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
@@ -150,14 +160,14 @@
                 <div style="display: flex; gap: 10px; margin-bottom: 5px;">
                     <div style="flex: 3;">
                         <label style="font-size: 0.8rem;">案内テキスト</label>
-                        <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。" style="width: 100%;">
+                        <input type="text" id="input-scroll" value="【お知らせ】本日も「篠ノ井乗務区 LAB」をご利用いただきまして、ありがとうございます。列車名と行先を分離してさらにリアルになりました。" style="width: 100%;">
                     </div>
                     <div style="flex: 1; min-width: 110px;">
-                        <label style="font-size: 0.8rem;">案内文の色 (🆕)</label>
+                        <label style="font-size: 0.8rem;">案内文の色</label>
                         <select id="input-color-scroll">
-                            <option value="text-orange" selected>橙色（通常）</option>
+                            <option value="text-orange" selected>橙色</option>
                             <option value="text-green">緑色</option>
-                            <option value="text-red">赤色（緊急用）</option>
+                            <option value="text-red">赤色</option>
                         </select>
                     </div>
                 </div>
