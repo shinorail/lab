@@ -8,10 +8,10 @@
     background-image: linear-gradient(rgba(0,0,0,0.3) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(0,0,0,0.3) 1px, transparent 1px);
     background-size: 3px 3px;
-    position: relative; /* 時計の配置用 */
+    position: relative;
 }
 
-/* ─── ⏰ 【新機能】時計表示エリア ─── */
+/* 時計表示エリア */
 .led-clock-container {
     text-align: right;
     font-family: 'Courier New', monospace;
@@ -23,18 +23,17 @@
     letter-spacing: 1px;
 }
 
-/* ─── 各行のレイアウト（スマホの重なり対策） ─── */
+/* 各行のレイアウト（幅計算の最適化） */
 .led-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     height: 40px;
     border-bottom: 2px solid #111;
     font-family: 'Courier New', Courier, monospace, sans-serif;
     font-weight: bold;
-    font-size: 1.25rem; /* スマホ用に少しフォントを最適化 */
+    font-size: 1.15rem; /* 幅に収まるよう少し引き締め */
     letter-spacing: 1px;
-    white-space: nowrap; /* 🔥絶対に文字を折り返さないお守り */
+    white-space: nowrap;
 }
 
 .led-row:nth-child(3) {
@@ -43,21 +42,22 @@
     margin-top: 5px;
 }
 
-/* ─── 各パーツのレスポンシブ幅設定 ─── */
-.led-time  { width: 15%; min-width: 55px; }
-.led-type  { width: 18%; min-width: 55px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
-.led-name  { width: 42%; padding-left: 5px; overflow: hidden; text-overflow: ellipsis; }
-.led-car   { width: 15%; text-align: right; }
-.led-track { width: 10%; text-align: right; min-width: 25px; }
+/* ─── 各パーツの横幅設定 ─── */
+.led-time  { width: 14%; min-width: 48px; }
+.led-type  { width: 14%; text-align: center; overflow: hidden; text-overflow: ellipsis; }
+.led-name  { width: 30%; padding-left: 5px; overflow: hidden; text-overflow: ellipsis; } /* 🆕列車名 */
+.led-dest  { width: 20%; padding-left: 5px; overflow: hidden; text-overflow: ellipsis; } /* 🆕行先 */
+.led-car   { width: 14%; text-align: right; }
+.led-track { width: 8%;  text-align: right; min-width: 18px; }
 
-/* ─── LED基本発光カラー（新色追加） ─── */
+/* LED発光カラー */
 .text-orange { color: #ffaa00; text-shadow: 0 0 6px #ff8800; }
 .text-green  { color: #33ff33; text-shadow: 0 0 6px #00cc00; }
 .text-red    { color: #ff3333; text-shadow: 0 0 6px #cc0000; }
-.text-blue   { color: #3399ff; text-shadow: 0 0 6px #0066cc; } /* 🆕青 */
-.text-pink   { color: #ff66cc; text-shadow: 0 0 6px #cc0099; } /* 🆕ピンク */
+.text-blue   { color: #3399ff; text-shadow: 0 0 6px #0066cc; }
+.text-pink   { color: #ff66cc; text-shadow: 0 0 6px #cc0099; }
 
-/* ─── 流れる案内文字 ─── */
+/* 流れる案内文字 */
 .led-scroll-wrap {
     width: 100%;
     overflow: hidden;
@@ -73,54 +73,20 @@
     100% { transform: translate3d(-100%, 0, 0); }
 }
 
-/* スマホ表示（画面幅が狭い時）の微調整 */
+/* 📱 スマホ表示（縦向き）の極小フォント調整（はみ出しガード） */
 @media (max-width: 480px) {
     .led-board { padding: 8px 6px; }
-    .led-row { font-size: 0.95rem; height: 35px; }
-    .led-time { min-width: 42px; }
-    .led-name { width: 40%; }
+    .led-row { font-size: 0.8rem; height: 35px; }
 }
+
 /* ─── 📱 画面を横向き（ランドスケープ）にした時の自動最適化 ─── */
 @media (max-height: 500px) and (orientation: landscape) {
-    /* 1. 上のナビゲーションやタイトルを非表示にして、LEDを最優先にする */
-    .hamburger-btn,
-    .global-nav,
-    h1,
-    a[href="index.html"],
-    .control-panel,
-    .footer-links {
+    .hamburger-btn, .global-nav, h1, a[href="index.html"], .control-panel, .footer-links {
         display: none !important; 
     }
-
-    /* 2. 余白をゼロにして、画面全体を広く使う */
-    .container {
-        padding: 5px !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-    }
-
-    /* 3. LEDボードを画面横いっぱいに広げる（本物の掲示板化） */
-    .led-board {
-        width: 100vw;
-        box-sizing: border-box;
-        padding: 5px 15px;
-        border: 4px solid #333;
-    }
-
-    /* 4. 横長になった分、文字を大きくしてドット感を強調 */
-    .led-row {
-        height: 38px;
-        font-size: 1.4rem; /* 文字を大きく */
-        letter-spacing: 2px;
-    }
-    
-    .led-row:nth-child(3) {
-        height: 32px;
-    }
-
-    /* 5. 時計の位置を調整 */
-    .led-clock-container {
-        font-size: 0.9rem;
-        margin-bottom: 2px;
-    }
+    .container { padding: 5px !important; max-width: 100% !important; margin: 0 !important; }
+    .led-board { width: 100vw; box-sizing: border-box; padding: 5px 15px; border: 4px solid #333; }
+    .led-row { height: 38px; font-size: 1.3rem; letter-spacing: 2px; }
+    .led-row:nth-child(3) { height: 32px; }
+    .led-clock-container { font-size: 0.9rem; margin-bottom: 2px; }
 }
