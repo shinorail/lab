@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
 
-    // ─── 1. 共通パーツの開閉制御 ───
+    // ─── 1. 共通パーツ制御（メニュー・モーダル） ───
     const toggleBtn = document.getElementById('nav-toggle');
     const gNav = document.getElementById('global-nav');
     if (toggleBtn && gNav) {
@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
     const termsModal = document.getElementById('terms-modal');
     const openTermsBtn = document.getElementById('open-terms');
     const closeTermsBtn = document.getElementById('close-terms');
@@ -24,22 +23,33 @@ window.addEventListener('DOMContentLoaded', () => {
     if (closeTermsBtn && termsModal) closeTermsBtn.addEventListener('click', () => termsModal.classList.remove('active'));
 
 
-    // ─── 2. 簡略化のための選択肢（両数・のりば）の自動生成 ───
+    // ─── 2. 【新機能①】1秒ごとに連動するリアルタイムデジタル時計 ───
+    const liveClockEl = document.getElementById('led-live-clock');
+    function updateLiveClock() {
+        if (!liveClockEl) return;
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mm = String(d.getMinutes()).padStart(2, '0');
+        const ss = String(d.getSeconds()).padStart(2, '0');
+        liveClockEl.innerText = `${hh}:${mm}:${ss}`;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock(); // 初回起動
+
+
+    // ─── 3. 選択肢（両数・のりば）の自動生成 ───
     const carSelect1 = document.getElementById('input-car-1');
     const carSelect2 = document.getElementById('input-car-2');
     const trackSelect1 = document.getElementById('input-track-1');
     const trackSelect2 = document.getElementById('input-track-2');
 
-    // 両数の選択肢（1〜16両、および気動車・海外用の数字単体も網羅）
-    const carOptions = [];
+    const carOptions = [{ val: "", text: "(非表示)" }];
     for(let i = 1; i <= 16; i++) carOptions.push({ val: `${i}両`, text: `${i}両` });
-    for(let i = 1; i <= 10; i++) carOptions.push({ val: `${i} Lot`, text: `${i} (数字のみ)` }); // 私鉄や海外風用
+    for(let i = 1; i <= 12; i++) carOptions.push({ val: i, text: `${i} (数字のみ)` });
 
-    // のりばの選択肢（1〜10番線）
-    const trackOptions = [];
-    for(let i = 1; i <= 10; i++) trackOptions.push({ val: i, text: `${i}番線` });
+    const trackOptions = [{ val: "", text: "(なし)" }];
+    for(let i = 1; i <= 12; i++) trackOptions.push({ val: i, text: `${i}番線` });
 
-    // 各セレクトボックスに突っ込む関数
     function populateSelect(element, options, defaultVal) {
         if (!element) return;
         options.forEach(opt => {
@@ -50,18 +60,17 @@ window.addEventListener('DOMContentLoaded', () => {
             element.appendChild(el);
         });
     }
-
-    // 初期値を指定してセレクトボックスを組み立て
     populateSelect(carSelect1, carOptions, "6両");
     populateSelect(carSelect2, carOptions, "8両");
     populateSelect(trackSelect1, trackOptions, 3);
     populateSelect(trackSelect2, trackOptions, 2);
 
 
-    // ─── 3. 全国対応・双方向リアルタイム同期システム ───
+    // ─── 4. 全国対応＆個人自由カスタム色対応 同期システム ───
     function syncRow(rowNum) {
         const inputTime = document.getElementById(`input-time-${rowNum}`);
         const inputColor = document.getElementById(`input-color-${rowNum}`);
+        const inputPicker = document.getElementById(`input-picker-${rowNum}`);
         const inputType = document.getElementById(`input-type-${rowNum}`);
         const inputName = document.getElementById(`input-name-${rowNum}`);
         const inputCar = document.getElementById(`input-car-${rowNum}`);
@@ -73,41 +82,58 @@ window.addEventListener('DOMContentLoaded', () => {
         const ledCar = document.getElementById(`led-car-${rowNum}`);
         const ledTrack = document.getElementById(`led-track-${rowNum}`);
 
-        // テキストの流し込み
         if(inputTime && ledTime) ledTime.innerText = inputTime.value;
         if(inputType && ledType) ledType.innerText = inputType.value;
         if(inputName && ledName) ledName.innerText = inputName.value;
         if(inputCar && ledCar) ledCar.innerText = inputCar.value;
         if(inputTrack && ledTrack) ledTrack.innerText = inputTrack.value;
 
-        // 種別のカラーリングを完全制御
+        // 色付けロジック（個人カスタム対応）
         if(inputColor && ledType) {
-            ledType.classList.remove('text-green', 'text-orange', 'text-red');
-            ledType.classList.add(inputColor.value);
-        }
-    }
-
-    // 全体を更新するマスター関数
-    function updateAllLED() {
-        syncRow(1); // 1行目を同期
-        syncRow(2); // 2行目を同期
-
-        // 3行目（流れる案内）の同期
-        const inputScroll = document.getElementById('input-scroll');
-        const ledScrollText = document.getElementById('scroll-text');
-        if(inputScroll && ledScrollText) {
-            if (ledScrollText.innerText !== inputScroll.value) {
-                ledScrollText.innerText = inputScroll.value;
-                ledScrollText.style.animation = 'none';
-                ledScrollText.offsetHeight; // リフロー発生
-                ledScrollText.style.animation = '';
+            ledType.classList.remove('text-green', 'text-orange', 'text-red', 'text-blue', 'text-pink');
+            
+            if(inputColor.value === 'custom' && inputPicker) {
+                // カラーピッカーの色を直接テキストに注入（影も同色化）
+                ledType.style.color = inputPicker.value;
+                ledType.style.textShadow = `0 0 6px ${inputPicker.value}`;
+            } else {
+                // スタイル直書きをリセットしてクラスを適用
+                ledType.style.color = '';
+                ledType.style.textShadow = '';
+                ledType.classList.add(inputColor.value);
             }
         }
     }
 
-    // イベントリスナーの一括登録
-    const ids = ['input-time-1', 'input-color-1', 'input-type-1', 'input-name-1', 'input-car-1', 'input-track-1',
-                 'input-time-2', 'input-color-2', 'input-type-2', 'input-name-2', 'input-car-2', 'input-track-2', 'input-scroll'];
+    function updateAllLED() {
+        syncRow(1);
+        syncRow(2);
+
+        // 3行目（流れる案内＆新機能②：案内文の色）の同期
+        const inputScroll = document.getElementById('input-scroll');
+        const inputColorScroll = document.getElementById('input-color-scroll');
+        const ledScrollText = document.getElementById('scroll-text');
+        
+        if(inputScroll && ledScrollText) {
+            if (ledScrollText.innerText !== inputScroll.value) {
+                ledScrollText.innerText = inputScroll.value;
+                ledScrollText.style.animation = 'none';
+                ledScrollText.offsetHeight; // リフロー
+                ledScrollText.style.animation = '';
+            }
+        }
+        if(inputColorScroll && ledScrollText) {
+            ledScrollText.classList.remove('text-green', 'text-orange', 'text-red');
+            ledScrollText.classList.add(inputColorScroll.value);
+        }
+    }
+
+    // イベント一括登録
+    const ids = [
+        'input-time-1', 'input-color-1', 'input-picker-1', 'input-type-1', 'input-name-1', 'input-car-1', 'input-track-1',
+        'input-time-2', 'input-color-2', 'input-picker-2', 'input-type-2', 'input-name-2', 'input-car-2', 'input-track-2',
+        'input-scroll', 'input-color-scroll'
+    ];
 
     ids.forEach(id => {
         const el = document.getElementById(id);
@@ -117,6 +143,5 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 最初に一度実行して初期化
     updateAllLED();
 });

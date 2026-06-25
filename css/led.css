@@ -1,80 +1,82 @@
 /* ─── LED発車標全体 ─── */
 .led-board {
-    background-color: #050505; /* 漆黒の筐体 */
-    border: 6px solid #222;    /* 枠枠 */
+    background-color: #050505;
+    border: 6px solid #222;
     border-radius: 4px;
-    padding: 10px 15px;
+    padding: 10px 12px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
-    /* ドットマトリクス風の格子背景を薄く重ねてリアルに */
     background-image: linear-gradient(rgba(0,0,0,0.3) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(0,0,0,0.3) 1px, transparent 1px);
     background-size: 3px 3px;
+    position: relative; /* 時計の配置用 */
 }
 
-/* ─── 各行のレイアウト ─── */
+/* ─── ⏰ 【新機能】時計表示エリア ─── */
+.led-clock-container {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #ffaa00;
+    text-shadow: 0 0 4px #ff8800;
+    margin-bottom: 5px;
+    padding-right: 5px;
+    letter-spacing: 1px;
+}
+
+/* ─── 各行のレイアウト（スマホの重なり対策） ─── */
 .led-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: 40px;
     border-bottom: 2px solid #111;
     font-family: 'Courier New', Courier, monospace, sans-serif;
     font-weight: bold;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-    overflow: hidden;
+    font-size: 1.25rem; /* スマホ用に少しフォントを最適化 */
+    letter-spacing: 1px;
+    white-space: nowrap; /* 🔥絶対に文字を折り返さないお守り */
 }
 
-.led-row:last-child {
+.led-row:nth-child(3) {
     border-bottom: none;
     height: 35px;
     margin-top: 5px;
 }
 
-/* 各パーツの横幅を駅の掲示板風に固定 */
-.led-time  { width: 15%; }
-.led-type  { width: 15%; text-align: center; }
-.led-name  { width: 45%; padding-left: 10px; }
+/* ─── 各パーツのレスポンシブ幅設定 ─── */
+.led-time  { width: 15%; min-width: 55px; }
+.led-type  { width: 18%; min-width: 55px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
+.led-name  { width: 42%; padding-left: 5px; overflow: hidden; text-overflow: ellipsis; }
 .led-car   { width: 15%; text-align: right; }
-.led-track { width: 10%; text-align: right; }
+.led-track { width: 10%; text-align: right; min-width: 25px; }
 
-/* ─── LED発光カラー（3色LED風） ─── */
-.text-orange {
-    color: #ffaa00;
-    text-shadow: 0 0 6px #ff8800;
-}
-.text-green {
-    color: #33ff33;
-    text-shadow: 0 0 6px #00cc00;
-}
-.text-red {
-    color: #ff3333;
-    text-shadow: 0 0 6px #cc0000;
-}
+/* ─── LED基本発光カラー（新色追加） ─── */
+.text-orange { color: #ffaa00; text-shadow: 0 0 6px #ff8800; }
+.text-green  { color: #33ff33; text-shadow: 0 0 6px #00cc00; }
+.text-red    { color: #ff3333; text-shadow: 0 0 6px #cc0000; }
+.text-blue   { color: #3399ff; text-shadow: 0 0 6px #0066cc; } /* 🆕青 */
+.text-pink   { color: #ff66cc; text-shadow: 0 0 6px #cc0099; } /* 🆕ピンク */
 
-/* ─── ✨ 流れる案内文字（無限スクロール仕様） ─── */
-.led-info-row {
-    width: 100%;
-}
-
+/* ─── 流れる案内文字 ─── */
 .led-scroll-wrap {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
-    position: relative;
 }
-
 .led-scroll-text {
     display: inline-block;
-    padding-left: 100%; /* 画面の右端からスタート */
-    animation: led-scroll 15s linear infinite; /* 15秒かけて左へ、無限ループ */
+    padding-left: 100%;
+    animation: led-scroll 15s linear infinite;
+}
+@keyframes led-scroll {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
 }
 
-/* スクロールのアニメーション定義 */
-@keyframes led-scroll {
-    0% {
-        transform: translate3d(0, 0, 0);
-    }
-    100% {
-        transform: translate3d(-100%, 0, 0); /* 文字列が完全に左に消えるまで */
-    }
+/* スマホ表示（画面幅が狭い時）の微調整 */
+@media (max-width: 480px) {
+    .led-board { padding: 8px 6px; }
+    .led-row { font-size: 0.95rem; height: 35px; }
+    .led-time { min-width: 42px; }
+    .led-name { width: 40%; }
 }
