@@ -80,3 +80,47 @@
     .led-time { min-width: 42px; }
     .led-name { width: 40%; }
 }
+/* ─── 📱 画面を横向き（ランドスケープ）にした時の自動最適化 ─── */
+@media (max-height: 500px) and (orientation: landscape) {
+    /* 1. 上のナビゲーションやタイトルを非表示にして、LEDを最優先にする */
+    .hamburger-btn,
+    .global-nav,
+    h1,
+    a[href="index.html"],
+    .control-panel,
+    .footer-links {
+        display: none !important; 
+    }
+
+    /* 2. 余白をゼロにして、画面全体を広く使う */
+    .container {
+        padding: 5px !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    /* 3. LEDボードを画面横いっぱいに広げる（本物の掲示板化） */
+    .led-board {
+        width: 100vw;
+        box-sizing: border-box;
+        padding: 5px 15px;
+        border: 4px solid #333;
+    }
+
+    /* 4. 横長になった分、文字を大きくしてドット感を強調 */
+    .led-row {
+        height: 38px;
+        font-size: 1.4rem; /* 文字を大きく */
+        letter-spacing: 2px;
+    }
+    
+    .led-row:nth-child(3) {
+        height: 32px;
+    }
+
+    /* 5. 時計の位置を調整 */
+    .led-clock-container {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+}
