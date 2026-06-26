@@ -1,183 +1,171 @@
-// 状態管理
-let keyPosition = "off"; 
+// 大糸線データ
+const lineData = {
+    name: "大糸線",
+    stations: [
+        { name: "松本", zone: 1 },
+        { name: "北松本", zone: 2 },
+        { name: "島内", zone: 3 },
+        { name: "島高松", zone: 4 },
+        { name: "梓橋", zone: 5 },
+        { name: "一日市場", zone: 6 },
+        { name: "中萱", zone: 7 },
+        { name: "南豊科", zone: 8 },
+        { name: "豊科", zone: 9 },
+        { name: "柏矢町", zone: 10 },
+        { name: "穂高", zone: 11 }
+    ]
+};
+
+let currentStationIndex = 0;
+const totalBoxes = 24;
+
+// スイッチ状態
+let isUnlocked = false;
 let isDoorOpen = false;
 
-// Web Audio APIの初期化（音を合成する心臓部）
-let audioCtx = null;
-let buzzerOsc = null; // 押しっぱなしに対応するためのブザー保持用
+// 要素取得
+const fareGrid = document.getElementById('fare-grid');
+const nextStationNameEl = document.getElementById('next-station-name');
+const currentStationTextEl = document.getElementById('current-station-text');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
 
-function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-}
-
-// HTML要素の取得
-const keyCylinder = document.getElementById('key-cylinder');
+const keySwitch = document.getElementById('key-switch');
 const leverOpen = document.getElementById('lever-open');
-const leverClose = document.getElementById('lever-close');
-const doorIndicator = document.getElementById('door-indicator');
-const btnBuzzer = document.getElementById('btn-buzzer');
-const btnChime = document.getElementById('btn-chime');
-const btnInsideOpen = document.getElementById('btn-inside-open');
-const btnInsideClose = document.getElementById('btn-inside-close');
+const btnClose = document.getElementById('btn-close');
+const doorLeft = document.getElementById('door-left');
+const doorRight = document.getElementById('door-right');
+const statusText = document.getElementById('status-text');
 
-// 1. 車掌鍵の切り替え
-keyCylinder.addEventListener('click', () => {
-    initAudio(); // 画面タップ時にオーディオを有効化
-    if (isDoorOpen) return;
+// 運賃マス初期生成
+function initDisplay() {
+    fareGrid.innerHTML = '';
+    for (let i = 1; i <= totalBoxes; i++) {
+        const box = document.createElement('div');
+        box.className = 'fare-box disabled';
+        box.id = `box-${i}`;
 
-    keyCylinder.classList.remove('pos-off', 'pos-semi', 'pos-auto');
+        const numLabel = document.createElement('span');
+        numLabel.className = 'num-label';
+        numLabel.textContent = String(i).padStart(2, '0');
+
+        const fareValue = document.createElement('span');
+        fareValue.className = 'fare-value';
+
+        box.appendChild(numLabel);
+        box.appendChild(fareValue);
+        fareGrid.appendChild(box);
+    }
+    updateDisplay();
+}
+
+// 運賃表アップデート
+function updateDisplay() {
+    const stations = lineData.stations;
     
-    if (keyPosition === "off") {
-        keyPosition = "semi"; // 半自動
-        keyCylinder.classList.add('pos-semi');
-        enableLevers(true);
-        btnInsideOpen.disabled = false;
-    } else if (keyPosition === "semi") {
-        keyPosition = "auto"; // 自動
-        keyCylinder.classList.add('pos-auto');
-        enableLevers(true);
-        btnInsideOpen.disabled = true;
-        btnInsideClose.disabled = true;
+    if (currentStationIndex === 0) {
+        nextStationNameEl.textContent = `${stations[0].name} (始発前)`;
+        currentStationTextEl.textContent = "松本駅に停車中";
+        clearAllBoxes();
+        return;
+    }
+
+    const targetStation = stations[currentStationIndex];
+    nextStationNameEl.textContent = targetStation.name;
+    currentStationTextEl.textContent = `${stations[currentStationIndex - 1].name} を発車 ➔ 次は ${targetStation.name}`;
+
+    for (let i = 1; i <= totalBoxes; i++) {
+        const box = document.getElementById(`box-${i}`);
+        const fareValueEl = box.querySelector('.fare-value');
+
+        if (i < targetStation.zone) {
+            box.classList.remove('disabled');
+            const stationDiff = targetStation.zone - i;
+            let calculatedFare = 150 + (stationDiff * 40);
+            if (calculatedFare > 500) calculatedFare = 500;
+            fareValueEl.textContent = calculatedFare;
+        } else {
+            box.classList.add('disabled');
+            fareValueEl.textContent = '';
+        }
+    }
+}
+
+function clearAllBoxes() {
+    for (let i = 1; i <= totalBoxes; i++) {
+        const box = document.getElementById(`box-${i}`);
+        box.classList.add('disabled');
+        box.querySelector('.fare-value').textContent = '';
+    }
+}
+
+// 運行ボタンのイベント
+btnNext.addEventListener('click', () => {
+    if (isDoorOpen) {
+        alert("扉が開いた状態では出発できません！");
+        return;
+    }
+    if (currentStationIndex < lineData.stations.length - 1) {
+        currentStationIndex++;
+        updateDisplay();
     } else {
-        keyPosition = "off"; // 切
-        keyCylinder.classList.add('pos-off');
-        enableLevers(false);
-        btnInsideOpen.disabled = true;
-        btnInsideClose.disabled = true;
+        alert("終点に到着しました。");
     }
 });
 
-function enableLevers(enabled) {
-    leverOpen.disabled = !enabled;
-    leverClose.disabled = !enabled;
-}
+btnPrev.addEventListener('click', () => {
+    if (isDoorOpen) return;
+    if (currentStationIndex > 0) {
+        currentStationIndex--;
+        updateDisplay();
+    }
+});
 
-// 2. 車掌スイッチ「開」
+// 車掌スイッチイベント
+keySwitch.addEventListener('click', () => {
+    if (!isUnlocked) {
+        isUnlocked = true;
+        keySwitch.textContent = "🔑 解除";
+        keySwitch.classList.add('unlocked');
+        leverOpen.disabled = false;
+        statusText.textContent = "解除（扉操作可能）";
+        statusText.style.color = "#ffd700";
+    } else {
+        if (isDoorOpen) {
+            alert("扉が開いている時はロックできません！");
+            return;
+        }
+        isUnlocked = false;
+        keySwitch.textContent = "🔑 ロック";
+        keySwitch.classList.remove('unlocked');
+        leverOpen.disabled = true;
+        btnClose.disabled = true;
+        statusText.textContent = "固定（ロック）";
+        statusText.style.color = "#ff5252";
+    }
+});
+
 leverOpen.addEventListener('click', () => {
-    if (keyPosition === "off" || isDoorOpen) return;
-    if (keyPosition === "auto") {
-        openDoorSystem();
-    } else if (keyPosition === "semi") {
-        btnInsideOpen.disabled = false;
-    }
-});
-
-// 3. 車掌スイッチ「閉」
-leverClose.addEventListener('click', () => {
-    if (keyPosition === "off" || !isDoorOpen) return;
-    closeDoorSystem();
-});
-
-// 4. 車内ボタン「あける」
-btnInsideOpen.addEventListener('click', () => {
-    if (keyPosition === "semi" && !isDoorOpen) {
-        openDoorSystem();
-        btnInsideOpen.disabled = true;
-        btnInsideClose.disabled = false;
-    }
-});
-
-// 5. 車内ボタン「しめる」
-btnInsideClose.addEventListener('click', () => {
-    if (keyPosition === "semi" && isDoorOpen) {
-        closeDoorSystem();
-        btnInsideOpen.disabled = false;
-        btnInsideClose.disabled = true;
-    }
-});
-
-// 🚪 ドアを開ける（プシュー音の代わりに電子音で通知）
-function openDoorSystem() {
+    if (!isUnlocked || isDoorOpen) return;
     isDoorOpen = true;
-    leverOpen.classList.add('active');
-    leverClose.classList.remove('active');
-    doorIndicator.classList.add('lit');
-    playTone(880, 'sine', 0.1); // ピッ（高音）
-}
-
-// 🚪 ドアを閉める
-function closeDoorSystem() {
-    isDoorOpen = false;
-    leverClose.classList.add('active');
-    leverOpen.classList.remove('active');
-    doorIndicator.classList.remove('lit');
-    playTone(440, 'sine', 0.1); // ポッ（低音）
-}
-
-// 🔊 【電子音を合成する関数】
-function playTone(freq, type, duration) {
-    initAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime); // 音量調整
-    gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration); // 滑らかに消音
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-}
-
-// 6. 連絡ブザー（押している間だけ「ブーーー」と鳴るリアル仕様）
-btnBuzzer.addEventListener('mousedown', () => {
-    initAudio();
-    if (buzzerOsc) return; // 既に鳴ってたら無視
-    
-    buzzerOsc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    
-    buzzerOsc.type = 'sawtooth'; // 実車のブザーに近いギザギザ波形
-    buzzerOsc.frequency.setValueAtTime(400, audioCtx.currentTime); // 400Hzの低い音
-    
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    
-    buzzerOsc.connect(gain);
-    gain.connect(audioCtx.destination);
-    buzzerOsc.start();
+    leverOpen.classList.add('on');
+    doorLeft.classList.add('open');
+    doorRight.classList.add('open');
+    btnClose.disabled = false;
+    statusText.textContent = "扉 開";
+    statusText.style.color = "#4caf50";
 });
 
-// マウスや指を離したらブザーを止める
-const stopBuzzer = () => {
-    if (buzzerOsc) {
-        buzzerOsc.stop();
-        buzzerOsc.disconnect();
-        buzzerOsc = null;
-    }
-};
-btnBuzzer.addEventListener('mouseup', stopBuzzer);
-btnBuzzer.addEventListener('mouseleave', stopBuzzer);
-btnBuzzer.addEventListener('touchend', stopBuzzer); // スマホ対応
+btnClose.addEventListener('click', () => {
+    if (!isUnlocked || !isDoorOpen) return;
+    isDoorOpen = false;
+    leverOpen.classList.remove('on');
+    doorLeft.classList.remove('open');
+    doorRight.classList.remove('open');
+    btnClose.disabled = true;
+    statusText.textContent = "扉 閉";
+    statusText.style.color = "#ffd700";
+});
 
-// 7. 促進チャイム（JR東日本風の電子音「ピピピピ、ピピピピ」を計算で再現）
-if (btnChime) {
-    btnChime.addEventListener('click', () => {
-        initAudio();
-        const now = audioCtx.currentTime;
-        const notes = [1320, 1320, 1320, 1320]; // 電子チャイムの音程
-        
-        notes.forEach((freq, index) => {
-            const timeOffset = index * 0.15; // 音と音の間隔
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now + timeOffset);
-            
-            gain.gain.setValueAtTime(0.2, now + timeOffset);
-            gain.gain.exponentialRampToValueAtTime(0.00001, now + timeOffset + 0.1);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start(now + timeOffset);
-            osc.stop(now + timeOffset + 0.1);
-        });
-    });
-}
+// 起動
+initDisplay();
