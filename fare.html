@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ワンマン運賃表示器シミュレーター - 篠ノ井乗務区 LAB</title>
+    <link rel="stylesheet" href="css/fare.css">
+</head>
+<body>
+
+    <div class="fare-display">
+        <div class="next-station-zone">
+            <span class="label">つぎは</span>
+            <span id="next-station-name" class="station-name">---</span>
+        </div>
+
+        <div class="fare-grid" id="fare-grid">
+            </div>
+    </div>
+
+    <div class="control-panel">
+        <h3>操作パネル</h3>
+        <div class="btn-group">
+            <button id="btn-prev" class="control-btn">前の駅へ</button>
+            <button id="btn-next" class="control-btn btn-primary">次の駅へ</button>
+        </div>
+        <p class="status-text">現在の駅: <span id="current-station-text">未出発</span></p>
+    </div>
+
+    <script src="js/fare.js"></script>
+</body>
+</html>
