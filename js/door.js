@@ -1,76 +1,70 @@
-// ステート（状態）管理
-let isUnlocked = false; // 車掌鍵のロック状態
-let isDoorOpen = false; // ドアの開閉状態
+// 状態管理
+let keyPosition = "off"; // "auto" (自動), "off" (切), "semi" (半自動)
+let isDoorOpen = false;
 
 // HTML要素の取得
-const keySwitch = document.getElementById('key-switch');
+const keyCylinder = document.getElementById('key-cylinder');
 const leverOpen = document.getElementById('lever-open');
-const btnClose = document.getElementById('btn-close');
-const doorLeft = document.getElementById('door-left');
-const doorRight = document.getElementById('door-right');
-const statusText = document.getElementById('status-text');
+const leverClose = document.getElementById('lever-close');
+const doorIndicator = document.getElementById('door-indicator');
+const btnBuzzer = document.getElementById('btn-buzzer');
+const btnChime = document.getElementById('btn-chime');
 
-// 1. 車掌鍵の操作
-keySwitch.addEventListener('click', () => {
-    if (!isUnlocked) {
-        // ロック解除
-        isUnlocked = true;
-        keySwitch.textContent = "🔑 解除中";
-        keySwitch.classList.add('unlocked');
-        leverOpen.disabled = false; // ドア開レバーを操作可能にする
-        statusText.textContent = "ロック解除（扉操作可能）";
-        statusText.style.color = "#ffcc00";
+// 1. 車掌鍵ロータリースイッチのタップ切り替え
+keyCylinder.addEventListener('click', () => {
+    if (isDoorOpen) {
+        alert("扉が開いている時は、車掌鍵を『切』にできません！");
+        return;
+    }
+
+    // カチカチと状態をループ切り替え (切 -> 半自動 -> 自動 -> 切)
+    keyCylinder.classList.remove('pos-off', 'pos-semi', 'pos-auto');
+    
+    if (keyPosition === "off") {
+        keyPosition = "semi";
+        keyCylinder.classList.add('pos-semi');
+        enableLevers(true);
+    } else if (keyPosition === "semi") {
+        keyPosition = "auto";
+        keyCylinder.classList.add('pos-auto');
+        enableLevers(true);
     } else {
-        // ドアが開いている時は鍵をロックできない（安全装置）
-        if (isDoorOpen) {
-            alert("扉が開いているため、車掌鍵を固定できません！");
-            return;
-        }
-        // 再びロック
-        isUnlocked = false;
-        keySwitch.textContent = "🔑 ロック中";
-        keySwitch.classList.remove('unlocked');
-        leverOpen.disabled = true;
-        btnClose.disabled = true;
-        statusText.textContent = "固定（ロック）";
-        statusText.style.color = "#ff4444";
+        keyPosition = "off";
+        keyCylinder.classList.add('pos-off');
+        enableLevers(false);
     }
 });
 
-// 2. ドア「開」レバーの操作（上げる）
+// レバーのロック/解除を切り替える関数
+function enableLevers(enabled) {
+    leverOpen.disabled = !enabled;
+    leverClose.disabled = !enabled;
+}
+
+// 2. ドア「開」レバーの操作
 leverOpen.addEventListener('click', () => {
-    if (!isUnlocked) return;
+    if (keyPosition === "off" || isDoorOpen) return;
 
-    if (!isDoorOpen) {
-        // レバーを上げてドアを開ける
-        isDoorOpen = true;
-        leverOpen.classList.add('on');
-        leverOpen.textContent = "開";
-        
-        // ドアのアニメーション開始（CSSのclassを追加）
-        doorLeft.classList.add('open');
-        doorRight.classList.add('open');
-
-        btnClose.disabled = false; // ドア閉ボタンを有効化
-        statusText.textContent = "扉 開（レバー投入中）";
-        statusText.style.color = "#34a853";
-    }
+    isDoorOpen = true;
+    leverOpen.classList.add('active');
+    leverClose.classList.remove('active');
+    
+    // 側灯（表示灯）を点灯
+    doorIndicator.classList.add('lit');
 });
 
-// 3. ドア「閉」ボタンの操作（押す）
-btnClose.addEventListener('click', () => {
-    if (!isUnlocked || !isDoorOpen) return;
+// 3. ドア「閉」レバーの操作
+leverClose.addEventListener('click', () => {
+    if (keyPosition === "off" || !isDoorOpen) return;
 
-    // ドアを閉める
     isDoorOpen = false;
-    leverOpen.classList.remove('on');
-    leverOpen.textContent = "切";
-
-    // ドアのアニメーション（CSSのclassを外す）
-    doorLeft.classList.remove('open');
-    doorRight.classList.remove('open');
-
-    btnClose.disabled = true; // ドア閉ボタンを無効化
-    statusText.textContent = "扉 閉（ロック解除中）";
-    statusText.style.color = "#ffcc00";
+    leverClose.classList.add('active');
+    leverOpen.classList.remove('active');
+    
+    // 側灯（表示灯）を消灯
+    doorIndicator.classList.remove('lit');
 });
+
+// 4. 連絡ブザーと促進チャイム（擬似クリック動作のみ）
+btnBuzzer.addEventListener('mousedown', () => { /* ボタン押し下げの演出用 */ });
+btnChime.addEventListener('mousedown', () => { /* ボタン押し下げの演出用 */ });
