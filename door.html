@@ -3,12 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>車掌スイッチシミュレーター - 篠ノ井乗務区 LAB</title>
+    <title>車掌スイッチ＆車内ドアシミュレーター</title>
     <link rel="stylesheet" href="css/door.css">
 </head>
 <body>
 
+    <div class="hamburger-menu">
+        <input type="checkbox" id="menu-btn-check">
+        <label for="menu-btn-check" class="menu-btn"><span></span></label>
+        <div class="menu-content">
+            <ul>
+                <li><p style="font-weight: bold; color: #ff9900; padding-left: 20px;">篠ノ井乗務区 LAB</p></li>
+                <li><a href="door.html">車掌スイッチ・ドア</a></li>
+                <li><a href="fare.html">運賃表示器 (大糸線)</a></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="conductor-sim-container">
+        
         <div class="column-left">
             <div class="lever-zone">
                 <div class="lever-label">閉</div>
@@ -18,11 +31,6 @@
             </div>
 
             <div class="key-panel">
-                <div class="key-screw screw-tl"></div>
-                <div class="key-screw screw-tr"></div>
-                <div class="key-screw screw-bl"></div>
-                <div class="key-screw screw-br"></div>
-                
                 <div class="key-labels">
                     <span class="lbl-auto">自動</span>
                     <span class="lbl-off">切</span>
@@ -47,6 +55,12 @@
             <div class="buzzer-zone">
                 <div class="btn-label-plate">連絡ブザ</div>
                 <button id="btn-buzzer" class="round-metal-btn"></button>
+            </div>
+
+            <div class="inside-door-buttons">
+                <p class="inside-label">車内ドアスイッチ</p>
+                <button id="btn-inside-open" class="inside-btn open-btn" disabled>あける</button>
+                <button id="btn-inside-close" class="inside-btn close-btn" disabled>しめる</button>
             </div>
 
             <div class="chime-zone">
