@@ -11,7 +11,6 @@ const lineData = {
     ]
 };
 
-// 211系風 一体型幕データ
 const rollSigns = [
     { type: "普通", dest: "松本" },
     { type: "普通", dest: "信濃大町" },
@@ -19,14 +18,15 @@ const rollSigns = [
     { type: "回送", dest: " " }
 ];
 let currentSignIndex = 0;
-
 let currentStationIndex = 0;
 const totalBoxes = 24;
+
+// ギミック状態フラグ
 let isUnlocked = false;
 let isDoorOpen = false;
-let hasTakenTicket = false; // 1駅1枚制限フラグ
+let hasTakenTicket = false;
 
-// HTML要素取得
+// 要素取得
 const fareGrid = document.getElementById('fare-grid');
 const nextStationNameEl = document.getElementById('next-station-name');
 const currentStationTextEl = document.getElementById('current-station-text');
@@ -34,14 +34,16 @@ const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
 const btnBuzzer = document.getElementById('btn-buzzer');
 
+// 新・3D可動パーツの要素取得
 const keySwitch = document.getElementById('key-switch');
-const leverOpen = document.getElementById('lever-open');
+const keyRotator = document.getElementById('key-rotator');
+const keyStatusText = document.getElementById('key-status-text');
+const leverOpenZone = document.getElementById('lever-open-zone');
 const btnClose = document.getElementById('btn-close');
 const doorLeft = document.getElementById('door-left');
 const doorRight = document.getElementById('door-right');
 const statusText = document.getElementById('status-text');
 
-// 幕・発券機・放送・灯
 const signType = document.getElementById('sign-type');
 const signDest = document.getElementById('sign-dest');
 const btnRollSign = document.getElementById('btn-roll-sign');
@@ -53,7 +55,6 @@ const ticketStation = document.getElementById('ticket-station');
 const machineLamp = document.getElementById('machine-lamp');
 const btnGetTicket = document.getElementById('btn-get-ticket');
 
-// 運賃マス生成
 function initDisplay() {
     fareGrid.innerHTML = '';
     for (let i = 1; i <= totalBoxes; i++) {
@@ -69,15 +70,15 @@ function initDisplay() {
         box.appendChild(fareValue);
         fareGrid.appendChild(box);
     }
+    // 初期はレバー操作を禁止にするスタイルを当てる
+    leverOpenZone.classList.add('disabled');
     updateDisplay();
 }
 
-// 状態リフレッシュ
 function updateDisplay() {
     const stations = lineData.stations;
     const targetStation = stations[currentStationIndex];
     
-    // ワンマンランプ連動
     if (currentStationIndex > 0) {
         onemanIndicator.classList.add('active');
     } else {
@@ -86,7 +87,7 @@ function updateDisplay() {
 
     if (currentStationIndex === 0) {
         nextStationNameEl.textContent = `${stations[0].name}`;
-        currentStationTextEl.textContent = "松本駅 に停車中 (始発)";
+        currentStationTextEl.textContent = "松本駅 停車中 (始発)";
         announcementText.textContent = stations[0].text;
         clearAllBoxes();
     } else {
@@ -108,7 +109,6 @@ function updateDisplay() {
         }
     }
 
-    // 駅到着時に整理券を発行（この時点ではまだ取っていない）
     hasTakenTicket = false;
     issueTicket(targetStation.zone, targetStation.name);
 }
@@ -121,7 +121,6 @@ function clearAllBoxes() {
     }
 }
 
-// 整理券発券処理
 function issueTicket(zone, stationName) {
     ticketPaper.classList.remove('issued');
     machineLamp.classList.remove('active');
@@ -131,44 +130,88 @@ function issueTicket(zone, stationName) {
         ticketNum.textContent = String(zone).padStart(2, '0');
         ticketStation.textContent = stationName;
         ticketPaper.classList.add('issued');
-        machineLamp.classList.add('active'); // オレンジランプ点灯
-        btnGetTicket.disabled = false; // 「券を取る」を有効化
+        machineLamp.classList.add('active'); 
+        btnGetTicket.disabled = false; 
     }, 600);
 }
 
-// 整理券を取るボタン（1駅1回制限）
 btnGetTicket.addEventListener('click', () => {
     if (hasTakenTicket) return;
-
-    ticketPaper.classList.remove('issued'); // 券を引き抜く
-    machineLamp.classList.remove('active'); // ランプが消える
-    btnGetTicket.disabled = true; // 次の駅までボタンをロック
-    hasTakenTicket = true; // この駅では発券済みフラグ
+    ticketPaper.classList.remove('issued'); 
+    machineLamp.classList.remove('active'); 
+    btnGetTicket.disabled = true; 
+    hasTakenTicket = true; 
 });
 
-// 211系風 一体型連動方向幕回転
 btnRollSign.addEventListener('click', () => {
     signType.classList.add('rolling');
     signDest.classList.add('rolling');
-
     setTimeout(() => {
         currentSignIndex = (currentSignIndex + 1) % rollSigns.length;
         signType.textContent = rollSigns[currentSignIndex].type;
         signDest.textContent = rollSigns[currentSignIndex].dest;
-        
         signType.classList.remove('rolling');
         signDest.classList.remove('rolling');
     }, 500);
 });
 
-// 連絡ブザー
+// 立体車掌鍵：クリックするとカチャッと90度回転する
+keySwitch.addEventListener('click', () => {
+    if (!isUnlocked) {
+        isUnlocked = true;
+        keyRotator.classList.add('active'); // 90度回転
+        keyStatusText.textContent = "ON";
+        keyStatusText.style.color = "#ffd700";
+        leverOpenZone.classList.remove('disabled'); // レバーを動かせるようにする
+        statusText.textContent = "扉操作許可";
+        statusText.style.color = "#ffd700";
+    } else {
+        if (isDoorOpen) {
+            alert("扉が開いている時はロックできません！");
+            return;
+        }
+        isUnlocked = false;
+        keyRotator.classList.remove('active'); // 元に戻る
+        keyStatusText.textContent = "OFF";
+        keyStatusText.style.color = "#888";
+        leverOpenZone.classList.add('disabled');
+        btnClose.disabled = true;
+        statusText.textContent = "ロック中";
+        statusText.style.color = "#ff5252";
+    }
+});
+
+// 立体開レバー：クリックするとレバーがツルッと上にスライドしてドアが開く
+leverOpenZone.addEventListener('click', () => {
+    if (!isUnlocked || isDoorOpen) return;
+
+    isDoorOpen = true;
+    leverOpenZone.classList.add('active'); // レバーが上に上がる
+    doorLeft.classList.add('open');
+    doorRight.classList.add('open');
+    btnClose.disabled = false; // 閉ボタンが有効化
+    statusText.textContent = "扉 開（レバー投入）";
+    statusText.style.color = "#4caf50";
+});
+
+// 立体閉ボタン：押すとグッと奥に沈んで、ドアが閉まり、レバーが下に戻る
+btnClose.addEventListener('click', () => {
+    if (!isUnlocked || !isDoorOpen) return;
+
+    isDoorOpen = false;
+    leverOpenZone.classList.remove('active'); // レバーが勝手に「下」に戻る
+    doorLeft.classList.remove('open');
+    doorRight.classList.remove('open');
+    btnClose.disabled = true;
+    statusText.textContent = "扉 閉（ロック解除状態）";
+    statusText.style.color = "#ffd700";
+});
+
 btnBuzzer.addEventListener('click', () => {
-    // 擬似的に車内案内をチカッとさせるなどのダミー演出
     currentStationTextEl.style.color = "#ffeb3b";
     setTimeout(() => { currentStationTextEl.style.color = "#a5d6a7"; }, 200);
 });
 
-// 運行ボタン
 btnNext.addEventListener('click', () => {
     if (isDoorOpen) {
         alert("扉が開いています！安全のため出発できません。");
@@ -186,49 +229,6 @@ btnPrev.addEventListener('click', () => {
         currentStationIndex--;
         updateDisplay();
     }
-});
-
-// 車掌スイッチ
-keySwitch.addEventListener('click', () => {
-    if (!isUnlocked) {
-        isUnlocked = true;
-        keySwitch.textContent = "🔑 解除";
-        keySwitch.classList.add('unlocked');
-        leverOpen.disabled = false;
-        statusText.textContent = "操作許可";
-        statusText.style.color = "#ffd700";
-    } else {
-        if (isDoorOpen) return;
-        isUnlocked = false;
-        keySwitch.textContent = "🔑 ロック";
-        keySwitch.classList.remove('unlocked');
-        leverOpen.disabled = true;
-        btnClose.disabled = true;
-        statusText.textContent = "固定";
-        statusText.style.color = "#ff5252";
-    }
-});
-
-leverOpen.addEventListener('click', () => {
-    if (!isUnlocked || isDoorOpen) return;
-    isDoorOpen = true;
-    leverOpen.classList.add('on');
-    doorLeft.classList.add('open');
-    doorRight.classList.add('open');
-    btnClose.disabled = false;
-    statusText.textContent = "扉 開";
-    statusText.style.color = "#4caf50";
-});
-
-btnClose.addEventListener('click', () => {
-    if (!isUnlocked || !isDoorOpen) return;
-    isDoorOpen = false;
-    leverOpen.classList.remove('on');
-    doorLeft.classList.remove('open');
-    doorRight.classList.remove('open');
-    btnClose.disabled = true;
-    statusText.textContent = "扉 閉";
-    statusText.style.color = "#ffd700";
 });
 
 initDisplay();

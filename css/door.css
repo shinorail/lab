@@ -1,4 +1,3 @@
-/* 全体のベース */
 body {
     background-color: #1a1f1d;
     color: #fff;
@@ -12,11 +11,11 @@ body {
     user-select: none;
 }
 
-/* === 211系風 連動方向幕ユニット === */
+/* === 211系風 連動方向幕 === */
 .roll-sign-unit {
-    background-color: #2e3b36; /* 国鉄・JRの運転台金属グリーン風 */
+    background-color: #2e3b36;
     border: 5px solid #1e2623;
-    padding: 15px 25px;
+    padding: 12px 25px;
     border-radius: 8px;
     margin-bottom: 15px;
     display: flex;
@@ -24,91 +23,20 @@ body {
     gap: 20px;
     box-shadow: 0 6px 15px rgba(0,0,0,0.6);
 }
+.oneman-lamp-box { background-color: #111; padding: 5px 10px; border: 2px solid #444; }
+.oneman-lamp { color: #224422; font-weight: bold; font-size: 1.1rem; transition: all 0.3s; }
+.oneman-lamp.active { color: #00ff66; text-shadow: 0 0 10px #00ff66; }
+.roll-sign-housing { display: flex; background-color: #111; border: 4px solid #444; padding: 4px; gap: 4px; }
+.sign-window { background-color: #000; height: 50px; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; }
+.type-window { width: 90px; }
+.dest-window { width: 150px; }
+.sign-text { background-color: #ffffff; color: #000; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; position: absolute; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+.sign-text.rolling { transform: translateY(-60px); }
 
-/* ワンマン表示灯 */
-.oneman-lamp-box {
-    background-color: #111;
-    padding: 5px 10px;
-    border: 2px solid #444;
-}
-.oneman-lamp {
-    color: #224422; /* 消灯時は暗い緑 */
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: color 0.3s, text-shadow 0.3s;
-}
-.oneman-lamp.active {
-    color: #00ff66; /* 点灯 */
-    text-shadow: 0 0 10px #00ff66;
-}
-
-/* 211系特有の一体型方向幕枠 */
-.roll-sign-housing {
-    display: flex;
-    background-color: #111;
-    border: 4px solid #444;
-    padding: 4px;
-    gap: 4px;
-}
-
-.sign-window {
-    background-color: #000;
-    height: 50px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-}
-.type-window { width: 100px; } /* 種別幕 */
-.dest-window { width: 160px; } /* 行先幕 */
-
-.sign-text {
-    color: #ffffff; /* 白幕仕様 */
-    background-color: #ffffff;
-    color: #000;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.6rem;
-    font-weight: bold;
-    position: absolute;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 幕のガラガラ回転モーション */
-.sign-text.rolling {
-    transform: translateY(-60px);
-}
-
-/* === 自動放送テロップエリア === */
-.announcement-bar {
-    width: 100%;
-    max-width: 1000px;
-    background-color: #000;
-    border: 2px solid #333;
-    height: 30px;
-    overflow: hidden;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-}
-.scroll-text {
-    white-space: nowrap;
-    padding-left: 100%;
-    display: inline-block;
-    color: #00ffcc;
-    font-family: monospace;
-    font-size: 1rem;
-    animation: scroll-left 15s linear infinite;
-}
-@keyframes scroll-left {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(-100%, 0); }
-}
+/* === 自動放送テロップ === */
+.announcement-bar { width: 100%; max-width: 1000px; background-color: #000; border: 2px solid #333; height: 30px; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; }
+.scroll-text { white-space: nowrap; padding-left: 100%; display: inline-block; color: #00ffcc; font-family: monospace; font-size: 1rem; animation: scroll-left 14s linear infinite; }
+@keyframes scroll-left { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
 /* レイアウト */
 .main-layout { display: flex; gap: 25px; width: 100%; max-width: 1000px; flex-wrap: wrap; }
@@ -125,7 +53,7 @@ body {
 .fare-value { color: #ffcc00; font-size: 1.2rem; text-align: right; font-family: monospace; }
 .fare-box.disabled .num-label, .fare-box.disabled .fare-value { color: #151515; }
 
-/* 電車のドア */
+/* ドア */
 .train-window { background-color: #546e7a; border: 5px solid #37474f; border-radius: 6px; height: 160px; padding: 10px; display: flex; align-items: flex-end; }
 .door-frame { background-color: #111; width: 100%; height: 120px; position: relative; overflow: hidden; display: flex; border: 2px solid #222; }
 .door { background-color: #cfd8dc; border: 1px solid #b0bec5; width: 50%; height: 100%; position: relative; transition: transform 1.0s ease-in-out; }
@@ -145,21 +73,151 @@ body {
 .machine-lamp { width: 15px; height: 15px; border-radius: 50%; background-color: #333; position: absolute; top: 15px; right: 25px; transition: background-color 0.2s; }
 .machine-lamp.active { background-color: #ffff00; box-shadow: 0 0 8px #ffff00; }
 
-/* 各種スイッチ・コントロール */
-.conductor-panel { background-color: #37474f; border: 4px solid #263238; border-radius: 6px; padding: 12px; }
-.panel-title { font-size: 0.8rem; color: #b0bec5; text-align: center; border-bottom: 2px solid #263238; padding-bottom: 6px; font-weight: bold; }
-.switch-row { display: flex; justify-content: space-around; margin-top: 10px; }
-.switch-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.switch-label { font-size: 0.75rem; }
+/* =========================================
+   【超強化】3Dリアル可動スイッチデザイン 
+============================================ */
+.conductor-panel {
+    background-color: #2b3532; /* リアルな鉄板グリーン */
+    border: 4px solid #1c2220;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 10px 20px rgba(0,0,0,0.5);
+}
+.switch-row { display: flex; justify-content: space-around; align-items: center; margin-top: 15px; }
+.switch-group { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100px; }
+.switch-label { font-size: 0.8rem; font-weight: bold; color: #ccc; }
+.sub-label { font-size: 0.7rem; color: #888; font-family: monospace; margin-top: 5px; }
 
-.key-btn { width: 55px; height: 55px; border-radius: 50%; background: #212121; color: #ff5252; border: 3px solid #111; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
-.key-btn.unlocked { background: #ffd700; color: #000; border-color: #b79500; }
-.lever-btn { width: 45px; height: 60px; background: #212121; color: #fff; border: 2px solid #555; border-radius: 4px; cursor: pointer; font-weight: bold; }
-.lever-btn.on { transform: translateY(-5px); background: #4caf50; border-color: #2e7d32; }
-.close-btn { width: 55px; height: 55px; border-radius: 50%; background: #d32f2f; color: white; border: 3px solid #7f0000; font-weight: bold; cursor: pointer; }
-.status-indicator { text-align: center; font-size: 0.75rem; color: #b0bec5; margin-top: 10px; }
+/* ① 3D立体鍵穴ギミック */
+.key-hole-wrapper {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(#444, #111);
+    border: 4px solid #555;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.8), 0 3px 5px rgba(0,0,0,0.4);
+}
+.key-rotator {
+    width: 40px;
+    height: 40px;
+    background-color: #222;
+    border: 2px solid #333;
+    border-radius: 50%;
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 鍵の持ち手（突起パーツ） */
+.key-handle {
+    width: 8px;
+    height: 32px;
+    background: linear-gradient(to right, #e6c200, #ffeb3b, #c5a000);
+    border-radius: 2px;
+    position: absolute;
+    top: 4px;
+    left: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+/* 鍵がONに回った時 */
+.key-rotator.active {
+    transform: rotate(90deg); /* 90度カチャッと回る */
+}
+
+/* ② 3D縦型レバースイッチギミック */
+.lever-track {
+    width: 34px;
+    height: 85px;
+    background: #111;
+    border: 3px solid #444;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: inset 0 5px 10px rgba(0,0,0,0.9);
+    cursor: pointer;
+}
+.lever-knob {
+    width: 28px;
+    height: 45px;
+    position: absolute;
+    bottom: 5px; /* 初期位置は「切（下）」 */
+    left: 3px;
+    transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 金属シャフト */
+.lever-shaft {
+    width: 8px;
+    height: 30px;
+    background: linear-gradient(to right, #777, #bbb, #444);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+/* つまみ（赤色プラスチック風） */
+.lever-head {
+    width: 26px;
+    height: 16px;
+    background: radial-gradient(#ff3d00, #b21a00);
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 1px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.4);
+}
+/* レバーが「入（上）」にスライドした時 */
+.lever-track.active .lever-knob {
+    bottom: 35px; /* 上にカチャッと移動 */
+}
+/* ロックされて動かせない時の半透明 */
+.lever-track.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+/* ③ リアルに沈み込む押しボタン */
+.real-push-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background-color: #551111;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #330000, 0 8px 10px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+}
+.btn-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: radial-gradient(#ff3333, #aa1111);
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transform: translateY(-6px);
+    transition: transform 0.1s;
+    box-shadow: inset 0 2px 3px rgba(255,255,255,0.4);
+}
+/* ボタンが本当にグッと沈む動作 */
+.real-push-btn:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #330000, 0 4px 6px rgba(0,0,0,0.5);
+}
+.real-push-btn:active:not(:disabled) .btn-top {
+    transform: translateY(0);
+}
+.real-push-btn:disabled { opacity: 0.15; cursor: not-allowed; box-shadow: none; transform: none; }
+.real-push-btn:disabled .btn-top { transform: translateY(0); }
+
+/* 下部インジケータ */
+.status-indicator { text-align: center; font-size: 0.75rem; color: #b0bec5; margin-top: 15px; background: #1c2220; padding: 6px; border-radius: 4px; }
 #status-text { color: #ff5252; font-weight: bold; }
 
+/* 運転台 */
 .cab-panel { background-color: #2c3531; border-radius: 6px; padding: 12px; }
 .btn-group { display: flex; gap: 10px; }
 .cab-btn { flex: 1; padding: 10px; font-weight: bold; border: none; border-radius: 4px; background: #4d5652; color: white; cursor: pointer; }
@@ -169,5 +227,3 @@ body {
 .buzzer-btn { background-color: #e65100; }
 .buzzer-btn:active { background-color: #ffb74d; }
 .status-text { margin: 8px 0 0 0; font-size: 0.8rem; color: #a5d6a7; text-align: center; }
-
-button:disabled { opacity: 0.15; cursor: not-allowed; transform: none !important; box-shadow: none !important; }

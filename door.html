@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>211系仕様 ワンマン運行総合シミュレーター</title>
+    <title>211系仕様 ガチ可動ワンマンシミュレーター</title>
     <link rel="stylesheet" href="css/door.css">
 </head>
 <body>
@@ -49,7 +49,7 @@
         <div class="right-panel">
             
             <div class="ticket-machine-panel">
-                <div class="panel-title">整理券発券機 (1駅1枚制限システム)</div>
+                <div class="panel-title">整理券発券機 (1駅1枚制限)</div>
                 <div class="machine-body">
                     <div class="ticket-slot">
                         <div id="ticket-paper" class="ticket-paper">
@@ -60,33 +60,49 @@
                     </div>
                     <div class="machine-lamp" id="machine-lamp"></div>
                 </div>
-                <button id="btn-get-ticket" class="cab-btn ticket-btn" disabled>券を取る</button>
+                <button id="btn-get-ticket" class="cab-btn ticket-btn" disabled>券を引き抜く</button>
             </div>
 
             <div class="conductor-panel">
-                <div class="panel-title">車掌スイッチ (安全インターロック付)</div>
+                <div class="panel-title">車掌スイッチ盤 (3D可動ギミック)</div>
                 <div class="switch-row">
+                    
                     <div class="switch-group">
                         <span class="switch-label">車掌鍵</span>
-                        <button id="key-switch" class="key-btn">🔑 ロック</button>
+                        <div class="key-hole-wrapper" id="key-switch">
+                            <div class="key-rotator" id="key-rotator">
+                                <div class="key-handle"></div>
+                            </div>
+                        </div>
+                        <span class="sub-label" id="key-status-text">OFF</span>
                     </div>
+
                     <div class="switch-group">
-                        <span class="switch-label">ドア開</span>
-                        <button id="lever-open" class="lever-btn" disabled>切</button>
+                        <span class="switch-label">ドア開レバー</span>
+                        <div class="lever-track" id="lever-open-zone">
+                            <div class="lever-knob" id="lever-knob">
+                                <div class="lever-shaft"></div>
+                                <div class="lever-head"></div>
+                            </div>
+                        </div>
+                        <span class="sub-label">切 ➔ 入</span>
                     </div>
+
                     <div class="switch-group">
-                        <span class="switch-label">ドア閉</span>
-                        <button id="btn-close" class="close-btn" disabled>閉</button>
+                        <span class="switch-label">ドア閉ボタン</span>
+                        <button id="btn-close" class="real-push-btn" disabled>
+                            <span class="btn-top">閉</span>
+                        </button>
+                        <span class="sub-label">押</span>
                     </div>
                 </div>
-                <div class="status-indicator">ドアインターロック: <span id="status-text">固定</span></div>
+                <div class="status-indicator">安全構造: <span id="status-text">ロック中</span></div>
             </div>
 
             <div class="cab-panel">
-                <div class="panel-title" style="border:none; margin-bottom:10px;">運転台（運行・合図操作）</div>
                 <div class="btn-group">
                     <button id="btn-prev" class="cab-btn">◀ 駅戻る</button>
-                    <button id="btn-buzzer" class="cab-btn buzzer-btn">🔔 連絡ブザー (●)</button>
+                    <button id="btn-buzzer" class="cab-btn buzzer-btn">🔔 電鈴ブザー</button>
                     <button id="btn-next" class="cab-btn btn-next-station">次駅進む ➔</button>
                 </div>
                 <p class="status-text">スタフ現在地: <span id="current-station-text">松本駅 停車中</span></p>
