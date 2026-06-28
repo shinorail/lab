@@ -1,31 +1,38 @@
-// 大糸線データ
+// 運行駅データ（大糸線）
 const lineData = {
     name: "大糸線",
     stations: [
-        { name: "松本", zone: 1 },
-        { name: "北松本", zone: 2 },
-        { name: "島内", zone: 3 },
-        { name: "島高松", zone: 4 },
-        { name: "梓橋", zone: 5 },
-        { name: "一日市場", zone: 6 }
+        { name: "松本", zone: 1, text: "大糸線ワンマン列車をご利用いただきありがとうございます。次は 北松本 です。" },
+        { name: "北松本", zone: 2, text: "次は 島内 です。運賃は運賃表示器でお確かめください。" },
+        { name: "島内", zone: 3, text: "次は 島高松 です。お降りの際は一番前のドアからお降りください。" },
+        { name: "島高松", zone: 4, text: "次は 梓橋 です。整理券を無くさずにお持ちください。" },
+        { name: "梓橋", zone: 5, text: "次は 一日市場 です。まもなく一日市場に到着いたします。" },
+        { name: "一日市場", zone: 6, text: "本日もワンマン列車をご利用いただきありがとうございました。終点 一日市場 です。" }
     ]
 };
 
-// 方向幕の行先リスト
-const destinations = ["ワンマン 松本", "ワンマン 信濃大町", "ワンマン 南小谷", "回送"];
+// 211系風 一体型幕データ
+const rollSigns = [
+    { type: "普通", dest: "松本" },
+    { type: "普通", dest: "信濃大町" },
+    { type: "快速", dest: "南小谷" },
+    { type: "回送", dest: " " }
+];
 let currentSignIndex = 0;
 
 let currentStationIndex = 0;
 const totalBoxes = 24;
 let isUnlocked = false;
 let isDoorOpen = false;
+let hasTakenTicket = false; // 1駅1枚制限フラグ
 
-// 要素取得
+// HTML要素取得
 const fareGrid = document.getElementById('fare-grid');
 const nextStationNameEl = document.getElementById('next-station-name');
 const currentStationTextEl = document.getElementById('current-station-text');
 const btnPrev = document.getElementById('btn-prev');
 const btnNext = document.getElementById('btn-next');
+const btnBuzzer = document.getElementById('btn-buzzer');
 
 const keySwitch = document.getElementById('key-switch');
 const leverOpen = document.getElementById('lever-open');
@@ -34,16 +41,19 @@ const doorLeft = document.getElementById('door-left');
 const doorRight = document.getElementById('door-right');
 const statusText = document.getElementById('status-text');
 
-// 行先幕・発券機要素
+// 幕・発券機・放送・灯
+const signType = document.getElementById('sign-type');
+const signDest = document.getElementById('sign-dest');
 const btnRollSign = document.getElementById('btn-roll-sign');
-const rollSignText = document.getElementById('roll-sign-text');
+const onemanIndicator = document.getElementById('oneman-indicator');
+const announcementText = document.getElementById('announcement-text');
 const ticketPaper = document.getElementById('ticket-paper');
 const ticketNum = document.getElementById('ticket-num');
 const ticketStation = document.getElementById('ticket-station');
 const machineLamp = document.getElementById('machine-lamp');
 const btnGetTicket = document.getElementById('btn-get-ticket');
 
-// 運賃マス初期生成
+// 運賃マス生成
 function initDisplay() {
     fareGrid.innerHTML = '';
     for (let i = 1; i <= totalBoxes; i++) {
@@ -62,18 +72,27 @@ function initDisplay() {
     updateDisplay();
 }
 
-// 運賃表と駅表示の更新
+// 状態リフレッシュ
 function updateDisplay() {
     const stations = lineData.stations;
     const targetStation = stations[currentStationIndex];
     
+    // ワンマンランプ連動
+    if (currentStationIndex > 0) {
+        onemanIndicator.classList.add('active');
+    } else {
+        onemanIndicator.classList.remove('active');
+    }
+
     if (currentStationIndex === 0) {
-        nextStationNameEl.textContent = `${stations[0].name} (始発前)`;
-        currentStationTextEl.textContent = "松本駅に停車中";
+        nextStationNameEl.textContent = `${stations[0].name}`;
+        currentStationTextEl.textContent = "松本駅 に停車中 (始発)";
+        announcementText.textContent = stations[0].text;
         clearAllBoxes();
     } else {
         nextStationNameEl.textContent = targetStation.name;
-        currentStationTextEl.textContent = `次は ${targetStation.name}`;
+        currentStationTextEl.textContent = `走行中 ➔ 次は ${targetStation.name}`;
+        announcementText.textContent = targetStation.text;
 
         for (let i = 1; i <= totalBoxes; i++) {
             const box = document.getElementById(`box-${i}`);
@@ -81,7 +100,7 @@ function updateDisplay() {
             if (i < targetStation.zone) {
                 box.classList.remove('disabled');
                 const stationDiff = targetStation.zone - i;
-                fareValueEl.textContent = 150 + (stationDiff * 40);
+                fareValueEl.textContent = 160 + (stationDiff * 30);
             } else {
                 box.classList.add('disabled');
                 fareValueEl.textContent = '';
@@ -89,7 +108,8 @@ function updateDisplay() {
         }
     }
 
-    // 駅が変わったら自動で新しい整理券を「シュッ」と発券する
+    // 駅到着時に整理券を発行（この時点ではまだ取っていない）
+    hasTakenTicket = false;
     issueTicket(targetStation.zone, targetStation.name);
 }
 
@@ -101,41 +121,59 @@ function clearAllBoxes() {
     }
 }
 
-// 【新機能】整理券を発券するロジック
+// 整理券発券処理
 function issueTicket(zone, stationName) {
-    // 一旦引っ込める
     ticketPaper.classList.remove('issued');
     machineLamp.classList.remove('active');
+    btnGetTicket.disabled = true;
 
     setTimeout(() => {
-        // 券面データを書き換えてシュッと出す
         ticketNum.textContent = String(zone).padStart(2, '0');
         ticketStation.textContent = stationName;
         ticketPaper.classList.add('issued');
-        machineLamp.classList.add('active'); // ランプ点灯
-    }, 500);
+        machineLamp.classList.add('active'); // オレンジランプ点灯
+        btnGetTicket.disabled = false; // 「券を取る」を有効化
+    }, 600);
 }
 
-// 整理券を取るボタン
+// 整理券を取るボタン（1駅1回制限）
 btnGetTicket.addEventListener('click', () => {
-    ticketPaper.classList.remove('issued');
-    machineLamp.classList.remove('active');
+    if (hasTakenTicket) return;
+
+    ticketPaper.classList.remove('issued'); // 券を引き抜く
+    machineLamp.classList.remove('active'); // ランプが消える
+    btnGetTicket.disabled = true; // 次の駅までボタンをロック
+    hasTakenTicket = true; // この駅では発券済みフラグ
 });
 
-// 【新機能】方向幕をガラガラ回転させるロジック
+// 211系風 一体型連動方向幕回転
 btnRollSign.addEventListener('click', () => {
-    rollSignText.classList.add('rolling'); // 上にスクロールして消えるアニメーション
+    signType.classList.add('rolling');
+    signDest.classList.add('rolling');
 
     setTimeout(() => {
-        currentSignIndex = (currentSignIndex + 1) % destinations.length;
-        rollSignText.textContent = destinations[currentSignIndex];
-        rollSignText.classList.remove('rolling'); // 下からパッと戻る
-    }, 400);
+        currentSignIndex = (currentSignIndex + 1) % rollSigns.length;
+        signType.textContent = rollSigns[currentSignIndex].type;
+        signDest.textContent = rollSigns[currentSignIndex].dest;
+        
+        signType.classList.remove('rolling');
+        signDest.classList.remove('rolling');
+    }, 500);
+});
+
+// 連絡ブザー
+btnBuzzer.addEventListener('click', () => {
+    // 擬似的に車内案内をチカッとさせるなどのダミー演出
+    currentStationTextEl.style.color = "#ffeb3b";
+    setTimeout(() => { currentStationTextEl.style.color = "#a5d6a7"; }, 200);
 });
 
 // 運行ボタン
 btnNext.addEventListener('click', () => {
-    if (isDoorOpen) return;
+    if (isDoorOpen) {
+        alert("扉が開いています！安全のため出発できません。");
+        return;
+    }
     if (currentStationIndex < lineData.stations.length - 1) {
         currentStationIndex++;
         updateDisplay();
@@ -157,7 +195,7 @@ keySwitch.addEventListener('click', () => {
         keySwitch.textContent = "🔑 解除";
         keySwitch.classList.add('unlocked');
         leverOpen.disabled = false;
-        statusText.textContent = "扉操作可能";
+        statusText.textContent = "操作許可";
         statusText.style.color = "#ffd700";
     } else {
         if (isDoorOpen) return;
