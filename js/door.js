@@ -1,4 +1,4 @@
-// 路線データベース（駅名大量実装）
+// 路線データベース
 const lineDatabase = {
     ooito: {
         name: "大糸線",
@@ -10,9 +10,9 @@ const lineDatabase = {
             { name: "梓橋", zone: 5, text: "次は 一日市場 です。まもなく一日市場です。" },
             { name: "一日市場", zone: 6, text: "次は 中萱 です。お出口は右側です。" },
             { name: "中萱", zone: 7, text: "次は 南豊科 です。" },
-            { name: "南豊科", zone: 8, text: "次は 豊科 です。お降りの方は中ほどのボタンを…" },
+            { name: "南豊科", zone: 8, text: "次は 豊科 です。" },
             { name: "豊科", zone: 9, text: "次は 柏矢町 です。" },
-            { name: "柏矢町", zone: 10, text: "次は 穂高 です。穂高神社へお越しの方は…" },
+            { name: "柏矢町", zone: 10, text: "次は 穂高 です。" },
             { name: "穂高", zone: 11, text: "次は 有明 です。" },
             { name: "有明", zone: 12, text: "次は 安曇追分 です。" },
             { name: "安曇追分", zone: 13, text: "次は 信濃大町 です。この列車の終点です。" },
@@ -26,7 +26,7 @@ const lineDatabase = {
             { name: "田沢", zone: 2, text: "次は 明科 です。運賃表をご確認ください。" },
             { name: "明科", zone: 3, text: "次は 西条 です。長いトンネルに入ります。" },
             { name: "西条", zone: 4, text: "次は 坂北 です。" },
-            { name: "坂北", zone: 5, text: "次は 聖高原 です。お出口は左側です。" },
+            { name: "坂北", zone: 5, text: "次は 聖高原 です。" },
             { name: "聖高原", zone: 6, text: "次は 冠着 です。" },
             { name: "冠着", zone: 7, text: "次は 姥捨 です。日本三大車窓、スイッチバックの駅です。" },
             { name: "姥捨", zone: 8, text: "次は 稲荷山 です。スイッチバックのため一度バックします。" },
@@ -55,7 +55,12 @@ const lineDatabase = {
     }
 };
 
-let currentLineKey = "ooito";
+// データの読み込み（なければデフォルトは大糸線）
+let currentLineKey = localStorage.getItem('selectedLine') || "ooito";
+let savedType = localStorage.getItem('selectedType') || "普通";
+let savedDest = localStorage.getItem('selectedDest') || "松本";
+let isOnemanMode = localStorage.getItem('selectedOneman') !== 'false'; // デフォルトtrue
+
 let currentStationIndex = 0;
 const totalBoxes = 24;
 
@@ -90,15 +95,8 @@ const ticketStation = document.getElementById('ticket-station');
 const machineLamp = document.getElementById('machine-lamp');
 const btnGetTicket = document.getElementById('btn-get-ticket');
 
-// 設定画面の要素
-const selectLine = document.getElementById('select-line');
-const selectType = document.getElementById('select-type');
-const selectDest = document.getElementById('select-dest');
-const checkOneman = document.getElementById('check-oneman');
-
-// 起動初期化
 function initSystem() {
-    // 運賃マス枠生成
+    // 運賃グリッド生成
     fareGrid.innerHTML = '';
     for (let i = 1; i <= totalBoxes; i++) {
         const box = document.createElement('div');
@@ -115,48 +113,29 @@ function initSystem() {
     }
     leverOpenZone.classList.add('disabled');
 
-    // 初期設定の読み込み
-    updateDestSelect();
+    // 起動時に幕をくるくる回して初期セットする演出
+    triggerInitialRollSign();
     updateDisplay();
 }
 
-// 選択された路線に応じて、設定パネルの「行先ドロップダウン」を書き換える
-function updateDestSelect() {
-    currentLineKey = selectLine.value;
-    const stations = lineDatabase[currentLineKey].stations;
-    
-    selectDest.innerHTML = '';
-    stations.forEach(st => {
-        const opt = document.createElement('option');
-        opt.value = st.name;
-        opt.textContent = st.name;
-        selectDest.appendChild(opt);
-    });
-    // 最後の駅をデフォルト行先に選んでおく
-    selectDest.value = stations[stations.length - 1].name;
-}
-
-// 【重要】設定を変えたら方向幕がくるくる回るロジック
-function triggerRollSignAnimation() {
+function triggerInitialRollSign() {
     signType.classList.add('rolling');
     signDest.classList.add('rolling');
-
     setTimeout(() => {
-        signType.textContent = selectType.value;
-        signDest.textContent = selectDest.value;
+        signType.textContent = savedType;
+        signDest.textContent = savedDest;
         signType.classList.remove('rolling');
         signDest.classList.remove('rolling');
-    }, 500);
+    }, 600);
 }
 
-// 画面表示・運賃の同期リフレッシュ
 function updateDisplay() {
     const activeLine = lineDatabase[currentLineKey];
     const stations = activeLine.stations;
     const targetStation = stations[currentStationIndex];
     
     // ワンマン表示灯の連動
-    if (checkOneman.checked && currentStationIndex > 0) {
+    if (isOnemanMode && currentStationIndex > 0) {
         onemanIndicator.classList.add('active');
     } else {
         onemanIndicator.classList.remove('active');
@@ -172,7 +151,6 @@ function updateDisplay() {
         currentStationTextEl.textContent = `運行中 ➔ 次は ${targetStation.name}`;
         announcementText.textContent = targetStation.text;
 
-        // 運賃の自動連動パチパチ計算
         for (let i = 1; i <= totalBoxes; i++) {
             const box = document.getElementById(`box-${i}`);
             const fareValueEl = box.querySelector('.fare-value');
@@ -213,18 +191,7 @@ function issueTicket(zone, stationName) {
     }, 600);
 }
 
-// 設定変更イベントの監視
-selectLine.addEventListener('change', () => {
-    currentStationIndex = 0;
-    updateDestSelect();
-    triggerRollSignAnimation();
-    updateDisplay();
-});
-selectType.addEventListener('change', triggerRollSignAnimation);
-selectDest.addEventListener('change', triggerRollSignAnimation);
-checkOneman.addEventListener('change', updateDisplay);
-
-// 整理券引き抜き
+// 整理券
 btnGetTicket.addEventListener('click', () => {
     if (hasTakenTicket) return;
     ticketPaper.classList.remove('issued'); 
@@ -233,7 +200,7 @@ btnGetTicket.addEventListener('click', () => {
     hasTakenTicket = true; 
 });
 
-// 各種レバー・ボタン可動
+// スイッチギミック
 keySwitch.addEventListener('click', () => {
     if (!isUnlocked) {
         isUnlocked = true;

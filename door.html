@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>211系仕様 高機能・設定連動型ワンマンシミュレーター</title>
+    <title>211系仕様 高機能ワンマンシミュレーター (運転台)</title>
     <link rel="stylesheet" href="css/door.css">
 </head>
 <body>
+
+    <div class="menu-bar">
+        <a href="settings.html" class="menu-link">⚙ 運行設定画面を開く</a>
+    </div>
 
     <div class="roll-sign-unit">
         <div class="oneman-lamp-box">
@@ -23,11 +27,10 @@
     </div>
 
     <div class="announcement-bar">
-        <div id="announcement-text" class="scroll-text">設定パネルから路線や行先を選択してください。</div>
+        <div id="announcement-text" class="scroll-text">まもなく発車いたします。</div>
     </div>
 
     <div class="main-layout">
-        
         <div class="left-panel">
             <div class="fare-display">
                 <div class="next-station-zone">
@@ -46,7 +49,6 @@
         </div>
 
         <div class="right-panel">
-            
             <div class="ticket-machine-panel">
                 <div class="panel-title">整理券発券機 (1駅1枚制限)</div>
                 <div class="machine-body">
@@ -105,45 +107,6 @@
                 </div>
                 <p class="status-text">現在地: <span id="current-station-text">停車中</span></p>
             </div>
-        </div>
-    </div>
-
-    <div class="settings-container">
-        <h2>🛠 運行管理設定・コントロールパネル</h2>
-        <div class="settings-grid">
-            
-            <div class="settings-box">
-                <label>🗺 運行路線の選択</label>
-                <select id="select-line">
-                    <option value="ooito">大糸線 (松本〜信濃大町〜南小谷)</option>
-                    <option value="shinonoi">篠ノ井線 (松本〜明科〜長野)</option>
-                    <option value="chuo">中央本線 (松本〜塩尻〜上諏訪)</option>
-                </select>
-            </div>
-
-            <div class="settings-box">
-                <label>🏷 列車種別の設定（方向幕連動）</label>
-                <select id="select-type">
-                    <option value="普通">普通</option>
-                    <option value="快速">快速</option>
-                    <option value="区間快速">区間快速</option>
-                    <option value="臨時">臨時</option>
-                    <option value="試運転">試運転</option>
-                    <option value="回送">回送</option>
-                </select>
-            </div>
-
-            <div class="settings-box">
-                <label>📍 行先の設定（幕くるくる連動）</label>
-                <select id="select-dest">
-                    </select>
-            </div>
-
-            <div class="settings-box" style="display:flex; align-items:center; gap:10px; margin-top:20px;">
-                <input type="checkbox" id="check-oneman" checked style="width:20px; height:20px;">
-                <label for="check-oneman" style="margin:0; cursor:pointer;">ワンマン運行モード指定</label>
-            </div>
-
         </div>
     </div>
 

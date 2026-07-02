@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運行管理設定・コントロールパネル</title>
+    <link rel="stylesheet" href="css/door.css">
+</head>
+<body>
+
+    <div class="menu-bar">
+        <a href="door.html" class="menu-link">◀ 運転台画面に戻る</a>
+    </div>
+
+    <div class="settings-page-container">
+        <h2>🛠 運行管理設定・コントロールパネル</h2>
+        <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 20px;">路線や種別を設定し、「この設定で運行開始」を押すと運転台に反映されます。</p>
+        
+        <div class="settings-vertical-stack">
+            
+            <div class="settings-box">
+                <label>🗺 運行路線の選択</label>
+                <select id="setting-line">
+                    <option value="ooito">大糸線 (松本〜信濃大町)</option>
+                    <option value="shinonoi">篠ノ井線 (松本〜長野)</option>
+                    <option value="chuo">中央本線 (松本〜上諏訪)</option>
+                </select>
+            </div>
+
+            <div class="settings-box">
+                <label>🏷 列車種別の設定</label>
+                <select id="setting-type">
+                    <option value="普通">普通</option>
+                    <option value="快速">快速</option>
+                    <option value="区間快速">区間快速</option>
+                    <option value="臨時">臨時</option>
+                    <option value="試運転">試運転</option>
+                    <option value="回送">回送</option>
+                </select>
+            </div>
+
+            <div class="settings-box">
+                <label>📍 行先の設定</label>
+                <select id="setting-dest">
+                    </select>
+            </div>
+
+            <div class="settings-box" style="flex-direction:row; align-items:center; gap:10px; margin-top:10px;">
+                <input type="checkbox" id="setting-oneman" checked style="width:20px; height:20px;">
+                <label for="setting-oneman" style="margin:0; cursor:pointer;">ワンマン運行モード指定</label>
+            </div>
+
+            <button id="btn-start-train" class="start-run-btn">➔ この設定で運行開始！</button>
+
+        </div>
+    </div>
+
+    <script>
+        const lineData = {
+            ooito: ["松本", "北松本", "島内", "島高松", "梓橋", "一日市場", "豊科", "穂高", "信濃大町"],
+            shinonoi: ["松本", "明科", "西条", "聖高原", "姥捨", "篠ノ井", "長野"],
+            chuo: ["松本", "南松本", "塩尻", "みどり湖", "岡谷", "下諏訪", "上諏訪"]
+        };
+
+        const setLine = document.getElementById('setting-line');
+        const setType = document.getElementById('setting-type');
+        const setDest = document.getElementById('setting-dest');
+        const setOneman = document.getElementById('setting-oneman');
+        const btnStart = document.getElementById('btn-start-train');
+
+        function updateDestOptions() {
+            const line = setLine.value;
+            setDest.innerHTML = '';
+            lineData[line].forEach(st => {
+                const opt = document.createElement('option');
+                opt.value = st;
+                opt.textContent = st;
+                setDest.appendChild(opt);
+            });
+            setDest.value = lineData[line][lineData[line].length - 1];
+        }
+
+        setLine.addEventListener('change', updateDestOptions);
+        updateDestOptions();
+
+        // 既存の設定があれば復元
+        if(localStorage.getItem('selectedLine')) {
+            setLine.value = localStorage.getItem('selectedLine');
+            updateDestOptions();
+            setType.value = localStorage.getItem('selectedType');
+            setDest.value = localStorage.getItem('selectedDest');
+            setOneman.checked = localStorage.getItem('selectedOneman') === 'true';
+        }
+
+        // ボタンを押したらデータを保存して運転台にジャンプ
+        btnStart.addEventListener('click', () => {
+            localStorage.setItem('selectedLine', setLine.value);
+            localStorage.setItem('selectedType', setType.value);
+            localStorage.setItem('selectedDest', setDest.value);
+            localStorage.setItem('selectedOneman', setOneman.checked);
+            
+            // 運転台ページへ移動
+            window.location.href = 'door.html';
+        });
+    </script>
+</body>
+</html>
